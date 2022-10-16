@@ -4,14 +4,6 @@ import csv
 from datetime import datetime as dt
 
 
-class ReadingJoblogError(Exception):
-    pass
-
-
-class ReadingScheduleError(Exception):
-    pass
-
-
 class Jobnet:
 
     START_MSG = "ジョブネットが開始しました。"
@@ -28,26 +20,22 @@ class Jobnet:
 
         jobnets = {}
 
-        try:
-            with open(path, "r", encoding="utf-8") as f:
+        with open(path, "r", encoding="utf-8") as f:
 
-                reader = csv.DictReader(f)
+            reader = csv.DictReader(f)
 
-                for row in reader:
-                    date = dt.strptime(row["log date"], "%Y/%m/%d %H:%M:%S.%f")
-                    dictid = row["inner jobnet main id"]
-                    jobid = row["jobnet id"]
-                    msg = row["message"]
-                    name = row["jobnet name"]
+            for row in reader:
+                date = dt.strptime(row["log date"], "%Y/%m/%d %H:%M:%S.%f")
+                dictid = row["inner jobnet main id"]
+                jobid = row["jobnet id"]
+                msg = row["message"]
+                name = row["jobnet name"]
 
-                    if msg == Jobnet.START_MSG:
-                        jobnets[dictid] = Jobnet(jobid, name, date)
+                if msg == Jobnet.START_MSG:
+                    jobnets[dictid] = Jobnet(jobid, name, date)
 
-                    elif msg == Jobnet.END_MSG and dictid in jobnets.keys():
-                        jobnets[dictid].end = date
-
-        except:
-            raise ReadingJoblogError("An error occurred while reading the joblog file.")
+                elif msg == Jobnet.END_MSG and dictid in jobnets.keys():
+                    jobnets[dictid].end = date
 
         now = dt.now()
 
@@ -62,22 +50,16 @@ class Jobnet:
 
         schedules = []
 
-        try:
-            with open(path, "r", encoding="utf-8") as f:
+        with open(path, "r", encoding="utf-8") as f:
 
-                reader = csv.DictReader(f)
+            reader = csv.DictReader(f)
 
-                for row in reader:
-                    jobid = row["jobid"]
-                    name = row["jobnm"]
-                    start = dt.strptime(row["start"], "%H:%M:%S")
-                    end = dt.strptime(row["end"], "%H:%M:%S")
-                    schedules.append(Jobnet(jobid, name, start, end))
-
-        except:
-            raise ReadingScheduleError(
-                "An error occurred while reading the schedule file."
-            )
+            for row in reader:
+                jobid = row["jobid"]
+                jobnm = row["jobnm"]
+                start = dt.strptime(row["start"], "%H:%M:%S")
+                end = dt.strptime(row["end"], "%H:%M:%S")
+                schedules.append(Jobnet(jobid, jobnm, start, end))
 
         return sorted(schedules, key=lambda s: s.start)
 
