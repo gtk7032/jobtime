@@ -14,10 +14,11 @@ def parse_arguments():
 def main():
     args = parse_arguments()
     jobnets = Jobnet.read_joblog(args.joblog)
-    Jobnet.show(jobnets)
+    Jobnet.show_joblog(jobnets)
+    print("\n")
     schedule = Jobnet.read_schedule(args.schedule)
-    Jobnet.show(schedule)
-    
+    Jobnet.show_schedule(schedule)
+
 
 if __name__ == "__main__":
     main()
