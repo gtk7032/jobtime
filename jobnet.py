@@ -38,17 +38,16 @@ class Jobnet:
                     jobnets[dictid].end = date
 
         now = dt.now()
-
         for job in jobnets.values():
             if job.end is None:
                 job.end = now
 
-        return sorted(list(jobnets.values()), key=lambda job: job.start)
+        return sorted(list(jobnets.values()), key=lambda j: j.start)
 
     @staticmethod
-    def read_schedule(path: str) -> list[Jobnet]:
+    def read_schedule(path: str) -> dict[str, Jobnet]:
 
-        schedules = []
+        schedules = {}
 
         with open(path, "r", encoding="utf-8") as f:
 
@@ -59,11 +58,16 @@ class Jobnet:
                 jobnm = row["jobnm"]
                 start = dt.strptime(row["start"], "%H:%M:%S")
                 end = dt.strptime(row["end"], "%H:%M:%S")
-                schedules.append(Jobnet(jobid, jobnm, start, end))
+                schedules[jobid] = Jobnet(jobid, jobnm, start, end)
 
-        return sorted(schedules, key=lambda s: s.start)
+        return schedules
 
     @staticmethod
-    def show(jobnets: list[Jobnet]):
+    def show_joblog(jobnets: list[Jobnet]):
         for job in jobnets:
+            print(vars(job))
+
+    @staticmethod
+    def show_schedule(jobnets: dict[str, Jobnet]):
+        for job in jobnets.values():
             print(vars(job))
