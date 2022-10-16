@@ -1,5 +1,7 @@
 import argparse
 
+from jobnet import Jobnet
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -11,7 +13,8 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-    print(args.output)
+    jobnets = Jobnet.create_jobnets_from_file(args.joblog)
+    Jobnet.show(jobnets)
 
 
 if __name__ == "__main__":
