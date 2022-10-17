@@ -8,6 +8,7 @@ def parse_arguments():
     parser.add_argument("--joblog", required=True, type=str)
     parser.add_argument("--schedule", type=str, default="schdule.csv")
     parser.add_argument("--output", type=str)
+    parser.add_argument("--range", type=str)
     return parser.parse_args()
 
 
