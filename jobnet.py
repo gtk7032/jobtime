@@ -80,11 +80,15 @@ class Jobnet:
 
                 schedules[jobid][inrid] = Jobnet(jobid, inrid, jobnm, start, end)
 
-        for sdict in schedules.values():
-            tmp = sorted(sdict.items(), key=lambda x: x[1].start)
-            sdict = {jobid: job for jobid, job in tmp}
+        for s in schedules.values():
+            tmp = sorted(s.items(), key=lambda x: x[1].start)
+            s = {jobid: job for jobid, job in tmp}
 
-        return schedules
+        schedules = sorted(
+            schedules.items(), key=lambda x: x[1][next(iter(x[1]))].start
+        )
+
+        return {jobid: joblist for jobid, joblist in schedules}
 
     @staticmethod
     def show(jobnets: dict[str, dict[str, Jobnet]]):
