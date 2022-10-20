@@ -60,9 +60,9 @@ class Jobnet:
         return {jobid: jobnet for jobid, jobnet in jobnets}
 
     @staticmethod
-    def read_schedule(path: str) -> dict[str, list[Jobnet]]:
+    def read_schedule(path: str) -> dict[str, dict[str, Jobnet]]:
 
-        schedules: dict[str, list[Jobnet]] = {}
+        schedules: dict[str, dict[str, Jobnet]] = {}
 
         with open(path, "r", encoding="utf-8") as f:
 
@@ -70,29 +70,24 @@ class Jobnet:
 
             for row in reader:
                 jobid = row["jobid"]
+                inrid = str(len(schedules[jobid].keys()))
                 jobnm = row["jobnm"]
                 start = dt.strptime(row["start"], "%H:%M:%S")
                 end = dt.strptime(row["end"], "%H:%M:%S")
-                jobnet = Jobnet(jobid, None, jobnm, start, end)
 
-                if jobid in schedules.keys():
-                    schedules[jobid].append(jobnet)
-                else:
-                    schedules[jobid] = [jobnet]
+                if jobid not in schedules.keys():
+                    schedules[jobid] = {}
 
-        for slist in schedules.values():
-            slist = sorted(slist, key=lambda x: x.start)
+                schedules[jobid][inrid] = Jobnet(jobid, inrid, jobnm, start, end)
+
+        for sdict in schedules.values():
+            tmp = sorted(sdict.items(), key=lambda x: x[1].start)
+            sdict = {jobid: job for jobid, job in tmp}
 
         return schedules
 
     @staticmethod
-    def show_joblog(jobnets: dict[str, dict[str, Jobnet]]):
+    def show(jobnets: dict[str, dict[str, Jobnet]]):
         for joblist in jobnets.values():
             for job in joblist.values():
-                print(vars(job))
-
-    @staticmethod
-    def show_schedule(jobnets: dict[str, list[Jobnet]]):
-        for joblist in jobnets.values():
-            for job in joblist:
                 print(vars(job))

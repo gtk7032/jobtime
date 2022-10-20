@@ -34,10 +34,10 @@ def parse_arguments() -> dict[str, Any]:
 def main():
     args = parse_arguments()
     jobnets = Jobnet.read_joblog(args["joblog"])
-    Jobnet.show_joblog(jobnets)
+    Jobnet.show(jobnets)
     print("\n")
     schedule = Jobnet.read_schedule(args["schedule"])
-    Jobnet.show_schedule(schedule)
+    Jobnet.show(schedule)
     Plotter.plot(jobnets, schedule, args["output"], args["range"])
 
 
