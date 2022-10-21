@@ -37,4 +37,7 @@ class Plotter:
         output: str,
         range: dict[str, str],
     ):
-        pass
+        fmt_jobnets = format(jobnets)
+        print(fmt_jobnets)
+        fmt_schedule = format(schedule)
+        print(fmt_schedule)
