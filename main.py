@@ -11,7 +11,7 @@ def parse_arguments() -> dict[str, Any]:
     parser.add_argument("--joblog", required=True, type=str)
     parser.add_argument("--schedule", type=str, default="schdule.csv")
     parser.add_argument("--output", type=str)
-    parser.add_argument("--range", type=str)
+    parser.add_argument("--xrange", type=str)
     args = parser.parse_args()
 
     return {
@@ -23,7 +23,7 @@ def parse_arguments() -> dict[str, Any]:
             if args.output is not None
             else args.joblog.split(".")[-2] + ".png",
         ),
-        "range": (
+        "xrange": (
             dict(zip(["min", "max"], args.range.split("-")))
             if args.range is not None
             else None
@@ -38,7 +38,7 @@ def main():
     # print("\n")
     schedule = Jobnet.read_schedule(args["schedule"])
     # Jobnet.show(schedule)
-    Plotter.plot(jobnets, schedule, args["output"], args["range"])
+    Plotter.plot(jobnets, schedule, args["output"], args["xrange"])
 
 
 if __name__ == "__main__":

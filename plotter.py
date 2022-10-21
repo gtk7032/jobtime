@@ -35,9 +35,26 @@ class Plotter:
         jobnets: dict[str, dict[str, Jobnet]],
         schedule: dict[str, dict[str, Jobnet]],
         output: str,
-        range: dict[str, str],
+        xrange: dict[str, str],
     ):
-        fmt_jobnets = format(jobnets)
-        print(fmt_jobnets)
-        fmt_schedule = format(schedule)
-        print(fmt_schedule)
+        fmt_jobnets = Plotter.format(jobnets)
+        # print(fmt_jobnets)
+        fmt_schedule = Plotter.format(schedule)
+        # print(fmt_schedule)
+
+        for i in range(len(next(iter(fmt_jobnets.values())))):
+            btms = []
+            lens = []
+            y = []
+            labels = []
+
+            for jobid in fmt_jobnets.keys():
+                btms.append(fmt_jobnets[jobid][i]["min"])
+                lens.append(fmt_jobnets[jobid][i]["len"])
+                labels.append(next(iter(jobnets[jobid].values())).name)
+
+            print(btms)
+            print("\n")
+            print(lens)
+            print("\n")
+            print(labels)
