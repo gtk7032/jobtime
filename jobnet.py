@@ -70,7 +70,11 @@ class Jobnet:
 
             for row in reader:
                 jobid = row["jobid"]
-                inrid = str(len(schedules[jobid].keys()))
+                inrid = (
+                    str(len(schedules[jobid].keys()))
+                    if jobid in schedules.keys()
+                    else "0"
+                )
                 jobnm = row["jobnm"]
                 start = dt.strptime(row["start"], "%H:%M:%S")
                 end = dt.strptime(row["end"], "%H:%M:%S")
