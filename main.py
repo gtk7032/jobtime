@@ -24,8 +24,8 @@ def parse_arguments() -> dict[str, Any]:
             else args.joblog.split(".")[-2] + ".png",
         ),
         "xrange": (
-            dict(zip(["min", "max"], args.range.split("-")))
-            if args.range is not None
+            dict(zip(["min", "max"], args.xrange.split("-")))
+            if args.xrange is not None
             else None
         ),
     }

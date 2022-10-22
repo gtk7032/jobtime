@@ -54,6 +54,7 @@ class Jobnet:
             for job in joblist.values():
                 if job.end is None:
                     job.end = now
+                    print("date is empty")
 
         jobnets = sorted(jobnets.items(), key=lambda j: j[1][next(iter(j[1]))].start)
 
