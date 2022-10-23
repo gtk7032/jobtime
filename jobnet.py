@@ -56,9 +56,7 @@ class Jobnet:
                     job.end = now
                     print("date is empty")
 
-        jobnets = sorted(jobnets.items(), key=lambda j: j[1][next(iter(j[1]))].start)
-
-        return {jobid: jobnet for jobid, jobnet in jobnets}
+        return Jobnet.align_order(jobnets)
 
     @staticmethod
     def read_schedule(path: str) -> dict[str, dict[str, Jobnet]]:
@@ -85,15 +83,19 @@ class Jobnet:
 
                 schedules[jobid][inrid] = Jobnet(jobid, inrid, jobnm, start, end)
 
-        for s in schedules.values():
-            tmp = sorted(s.items(), key=lambda x: x[1].start)
-            s = {jobid: job for jobid, job in tmp}
+        return Jobnet.align_order(schedules)
 
-        schedules = sorted(
-            schedules.items(), key=lambda x: x[1][next(iter(x[1]))].start
-        )
+    @staticmethod
+    def align_order(
+        jobnets: dict[str, dict[str, Jobnet]]
+    ) -> dict[str, dict[str, Jobnet]]:
 
-        return {jobid: joblist for jobid, joblist in schedules}
+        for jn in jobnets.values():
+            sjn = sorted(jn.items(), key=lambda x: x[1].start)
+            jn = {jobid: job for jobid, job in sjn}
+
+        jobnets = sorted(jobnets.items(), key=lambda x: x[1][next(iter(x[1]))].start)
+        return {jobid: jobnet for jobid, jobnet in jobnets}
 
     @staticmethod
     def show(jobnets: dict[str, dict[str, Jobnet]]):
