@@ -79,8 +79,6 @@ class Plotter:
         fmtd_schedule = Plotter.format(schedule)
         # print(fmt_schedule)
 
-        plt.figure(figsize=(8.0, 6.0))
-
         jbtms, jlens = Plotter.create_jobnet_barh(fmtd_jobnets)
         sbtms, slens = Plotter.create_schedule_barh(
             fmtd_schedule, list(fmtd_jobnets.keys())
@@ -89,8 +87,10 @@ class Plotter:
         lbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
 
         y = np.arange(len(fmtd_jobnets.keys()))
-        plt.barh(y, jlens, left=jbtms, height=0.3, color="b", label="実行時間")
 
+        plt.figure(figsize=(8.0, 6.0))
+        plt.barh(y, jlens, left=jbtms, height=0.3, color="b", label="実行時間")
+        plt.barh(y + 0.4, slens, left=sbtms, height=0.3, color="g", label="予定時間")
         plt.legend()
         plt.yticks(y, lbls)
         plt.xlim([0, 9])
