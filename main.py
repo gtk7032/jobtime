@@ -38,6 +38,8 @@ def main():
     # print("\n")
     schedule = Jobnet.read_schedule(args["schedule"])
     # Jobnet.show(schedule)
+    # for id, v in schedule.items():
+    #     print(str(next(iter(v.values())).start))
     Plotter.plot(jobnets, schedule, args["output"], args["xrange"])
 
 
