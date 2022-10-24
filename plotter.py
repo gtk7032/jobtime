@@ -23,16 +23,15 @@ class Plotter:
             ]
             fmtd[jobid].extend(
                 [
-                    # fix
                     {
                         "min": Util.cvrt_to_hour(job.start)
-                        if job.start is not None and job.end is not None
+                        if job.is_genuine()
                         else 0.0,
-                        "len": Util.cvrt_to_hour(job.end) - Util.cvrt_to_hour(job.start)
-                        if job.start is None and job.end is not None) and Util.cvrt_to_hour(job.end) - Util.cvrt_to_hour(job.start)
-                        > (5 / 60)
-                        elif (job.start is not None and job.end is not None) and Util.cvrt_to_hour(job.end) - Util.cvrt_to_hour(job.start) <= (5/60) (5 / 60)
-                        else 0.0,
+                        "len": 0.0
+                        if not job.is_genuine()
+                        else job.get_duration()
+                        if job.get_duration() > (5 / 60)
+                        else 5 / 60,
                     }
                     for job in joblist.values()
                 ]
@@ -67,10 +66,12 @@ class Plotter:
     ) -> list[str]:
         s = sorted(
             jobnets.items(),
-            key=lambda x: next(iter(x[1].values())).start
-            if next(iter(x[1].values())).start is not None
-            else next(iter(schedule[x[0]].values())).start,
+            key=lambda x: Util.cvrt_to_hour(
+                next(iter(x[1].values())).start
+                or next(iter(schedule[x[0]].values())).start
+            ),
         )
+
         return [i[0] for i in s]
 
     @staticmethod

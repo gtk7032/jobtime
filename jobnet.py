@@ -4,6 +4,8 @@ import csv
 from datetime import datetime as dt
 from typing import Optional
 
+from util import Util
+
 
 class Jobnet:
 
@@ -23,6 +25,12 @@ class Jobnet:
         self.name = name
         self.start = start
         self.end = end
+
+    def is_genuine(self) -> bool:
+        return bool(self.start and self.end)
+
+    def get_duration(self) -> float:
+        return Util.cvrt_to_hour(self.end) - Util.cvrt_to_hour(self.start)
 
     @staticmethod
     def read_joblog(path: str) -> dict[str, dict[str, Jobnet]]:
@@ -54,7 +62,6 @@ class Jobnet:
             for job in joblist.values():
                 if job.end is None:
                     job.end = now
-                    print("date is empty")
 
         return Jobnet.align_order(jobnets)
 
@@ -91,10 +98,13 @@ class Jobnet:
     ) -> dict[str, dict[str, Jobnet]]:
 
         for jn in jobnets.values():
-            sjn = sorted(jn.items(), key=lambda x: x[1].start)
+            sjn = sorted(jn.items(), key=lambda x: Util.cvrt_to_hour(x[1].start))
             jn = {jobid: job for jobid, job in sjn}
 
-        jobnets = sorted(jobnets.items(), key=lambda x: x[1][next(iter(x[1]))].start)
+        jobnets = sorted(
+            jobnets.items(),
+            key=lambda x: Util.cvrt_to_hour(x[1][next(iter(x[1]))].start),
+        )
         return {jobid: jobnet for jobid, jobnet in jobnets}
 
     @staticmethod
