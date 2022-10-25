@@ -27,7 +27,7 @@ def parse_arguments() -> dict[str, Any]:
         "joblog": os.path.join("resources", args.joblog),
         "schedule": os.path.join("resources", args.schedule),
         "output": os.path.join(
-            "resources",
+            "output",
             args.output or pathlib.Path(args.joblog).with_suffix(".png"),
         ),
         "xrange": (dict(zip(["min", "max"], rng)) if rng else None),
