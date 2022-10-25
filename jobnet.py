@@ -15,10 +15,10 @@ class Jobnet:
     def __init__(
         self,
         jobnetid: str,
-        innerid: Optional[str],
+        innerid: str | None,
         name: str,
-        start: Optional[dt],
-        end: Optional[dt],
+        start: float | None,
+        end: float | None,
     ):
         self.jobid = jobnetid
         self.inrid = innerid
@@ -27,10 +27,10 @@ class Jobnet:
         self.end = end
 
     def is_genuine(self) -> bool:
-        return bool(self.start and self.end)
+        return self.start is not None and self.end is not None
 
     def get_duration(self) -> float:
-        return Util.cvrt_to_hour(self.end) - Util.cvrt_to_hour(self.start)
+        return self.end - self.start
 
     @staticmethod
     def read_joblog(path: str) -> dict[str, dict[str, Jobnet]]:
@@ -42,7 +42,9 @@ class Jobnet:
             reader = csv.DictReader(f)
 
             for row in reader:
-                date = dt.strptime(row["log date"], "%Y/%m/%d %H:%M:%S.%f")
+                date = Util.cvrt_to_hour(
+                    dt.strptime(row["log date"], "%Y/%m/%d %H:%M:%S.%f")
+                )
                 jobid = row["jobnet id"]
                 innerid = row["inner jobnet id"]
                 msg = row["message"]
@@ -57,7 +59,7 @@ class Jobnet:
                     if jobid in jobnets.keys():
                         jobnets[jobid][innerid].end = date
 
-        now = dt.now()
+        now = Util.cvrt_to_hour(dt.now())
         for joblist in jobnets.values():
             for job in joblist.values():
                 if job.end is None:
@@ -82,8 +84,8 @@ class Jobnet:
                     else "0"
                 )
                 jobnm = row["jobnm"]
-                start = dt.strptime(row["start"], "%H:%M:%S")
-                end = dt.strptime(row["end"], "%H:%M:%S")
+                start = Util.cvrt_to_hour(dt.strptime(row["start"], "%H:%M:%S"))
+                end = Util.cvrt_to_hour(dt.strptime(row["end"], "%H:%M:%S"))
 
                 if jobid not in schedules.keys():
                     schedules[jobid] = {}
@@ -98,12 +100,12 @@ class Jobnet:
     ) -> dict[str, dict[str, Jobnet]]:
 
         for jn in jobnets.values():
-            sjn = sorted(jn.items(), key=lambda x: Util.cvrt_to_hour(x[1].start))
+            sjn = sorted(jn.items(), key=lambda x: x[1].start)
             jn = {jobid: job for jobid, job in sjn}
 
         jobnets = sorted(
             jobnets.items(),
-            key=lambda x: Util.cvrt_to_hour(x[1][next(iter(x[1]))].start),
+            key=lambda x: x[1][next(iter(x[1]))].start,
         )
         return {jobid: jobnet for jobid, jobnet in jobnets}
 

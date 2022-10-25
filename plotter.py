@@ -4,7 +4,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from jobnet import Jobnet
-from util import Util
 
 
 class Plotter:
@@ -24,9 +23,7 @@ class Plotter:
             fmtd[jobid].extend(
                 [
                     {
-                        "min": Util.cvrt_to_hour(job.start)
-                        if job.is_genuine()
-                        else 0.0,
+                        "min": job.start if job.is_genuine() else 0.0,
                         "len": 0.0
                         if not job.is_genuine()
                         else job.get_duration()
@@ -66,12 +63,9 @@ class Plotter:
     ) -> list[str]:
         s = sorted(
             jobnets.items(),
-            key=lambda x: Util.cvrt_to_hour(
-                next(iter(x[1].values())).start
-                or next(iter(schedule[x[0]].values())).start
-            ),
+            key=lambda x: next(iter(x[1].values())).start
+            or next(iter(schedule[x[0]].values())).start,
         )
-
         return [i[0] for i in s]
 
     @staticmethod
@@ -103,8 +97,8 @@ class Plotter:
         y = np.arange(len(jobnets.keys()))
 
         plt.figure(figsize=(8.0, 6.0))
-        plt.barh(y, jlens, left=jbtms, height=0.3, color="b", label="実行時間")
         plt.barh(y + 0.4, slens, left=sbtms, height=0.3, color="g", label="予定時間")
+        plt.barh(y, jlens, left=jbtms, height=0.3, color="b", label="実行時間")
         plt.legend()
         plt.yticks(y, lbls)
         plt.xlim([0, 9])
