@@ -107,6 +107,3 @@ class Plotter:
         plt.rcParams["font.family"] = "IPAexGothic"
         plt.savefig(output, bbox_inches="tight")
         plt.show()
-
-        # range
-        # save image
