@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -76,8 +76,8 @@ class Plotter:
     def plot(
         jobnets: dict[str, dict[str, Jobnet]],
         schedule: dict[str, dict[str, Jobnet]],
-        output: str,
-        xrange: dict[str, str],
+        output: Optional[str],
+        xrange: Optional[dict[str, float]],
     ):
 
         Plotter.complete(jobnets, schedule)
@@ -105,9 +105,8 @@ class Plotter:
         plt.xticks(np.arange(0, 9 + 1, 1))
         plt.grid(color="gray", alpha=0.5)
         plt.rcParams["font.family"] = "IPAexGothic"
-        # plt.savefig(_path.with_suffix(".png"), bbox_inches="tight")
+        plt.savefig(output, bbox_inches="tight")
         plt.show()
 
-        # jobnetが存在しない時もsheduleを表示する
         # range
-        # sae image
+        # save image
