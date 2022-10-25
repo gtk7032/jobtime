@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import csv
 from datetime import datetime as dt
-from typing import Optional
 
 from util import Util
 
@@ -31,6 +30,12 @@ class Jobnet:
 
     def get_duration(self) -> float:
         return self.end - self.start
+
+    @staticmethod
+    def extract_xrange(jobnets: dict[str, dict[str, Jobnet]]):
+        mn = min(j.start for jn in jobnets.values() for j in jn.values())
+        mx = max(j.end for jn in jobnets.values() for j in jn.values())
+        return {"min": mn, "max": mx}
 
     @staticmethod
     def read_joblog(path: str) -> dict[str, dict[str, Jobnet]]:
