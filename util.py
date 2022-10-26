@@ -1,3 +1,4 @@
+import math
 from datetime import datetime as dt
 
 
@@ -8,15 +9,15 @@ class Util:
         return dt.hour + dt.minute / 60 + dt.second / 3600
 
     @staticmethod
-    def merge_xrange(fst: dict[str, float], scd: dict[str, float]):
-        if not fst and not scd:
-            return None
-        elif not fst:
-            return scd
-        elif not scd:
-            return fst
-        else:
-            return {
-                "min": min(fst["min"], scd["min"]),
-                "max": max(fst["max"], scd["max"]),
-            }
+    def merge_xrange(*xranges: dict[str, float]) -> dict[str, float]:
+        mn, mx = 24.0, 0.0
+        for rng in xranges:
+            if not rng:
+                continue
+            mn = min(mn, rng["min"])
+            mx = max(mx, rng["max"])
+        return {"min": mn, "max": mx}
+
+    @staticmethod
+    def integerize_xrange(xrange: dict[str, float]) -> dict[str, float]:
+        return {"min": math.floor(xrange["min"]), "max": math.ceil(xrange["max"])}
