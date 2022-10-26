@@ -33,8 +33,11 @@ class Jobnet:
 
     @staticmethod
     def extract_xrange(jobnets: dict[str, dict[str, Jobnet]]):
-        mn = min(j.start for jn in jobnets.values() for j in jn.values())
-        mx = max(j.end for jn in jobnets.values() for j in jn.values())
+        mn, mx = 24.0, 0.0
+        for jn in jobnets.values():
+            for j in jn.values():
+                mn = min(mn, j.start)
+                mx = max(mx, j.end)
         return {"min": mn, "max": mx}
 
     @staticmethod
@@ -47,6 +50,7 @@ class Jobnet:
             reader = csv.DictReader(f)
 
             for row in reader:
+
                 date = Util.cvrt_to_hour(
                     dt.strptime(row["log date"], "%Y/%m/%d %H:%M:%S.%f")
                 )
@@ -70,7 +74,7 @@ class Jobnet:
                 if job.end is None:
                     job.end = now
 
-        return Jobnet.align_order(jobnets)
+        return Jobnet.sort(jobnets)
 
     @staticmethod
     def read_schedule(path: str) -> dict[str, dict[str, Jobnet]]:
@@ -97,12 +101,10 @@ class Jobnet:
 
                 schedules[jobid][inrid] = Jobnet(jobid, inrid, jobnm, start, end)
 
-        return Jobnet.align_order(schedules)
+        return Jobnet.sort(schedules)
 
     @staticmethod
-    def align_order(
-        jobnets: dict[str, dict[str, Jobnet]]
-    ) -> dict[str, dict[str, Jobnet]]:
+    def sort(jobnets: dict[str, dict[str, Jobnet]]) -> dict[str, dict[str, Jobnet]]:
 
         for jn in jobnets.values():
             sjn = sorted(jn.items(), key=lambda x: x[1].start)

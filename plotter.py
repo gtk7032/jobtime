@@ -24,11 +24,9 @@ class Plotter:
                 [
                     {
                         "min": job.start if job.is_genuine() else 0.0,
-                        "len": 0.0
-                        if not job.is_genuine()
-                        else job.get_duration()
-                        if job.get_duration() > (5 / 60)
-                        else 5 / 60,
+                        "len": max(job.get_duration(), 5 / 60)
+                        if job.is_genuine()
+                        else 0.0,
                     }
                     for job in joblist.values()
                 ]

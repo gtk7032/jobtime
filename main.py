@@ -16,12 +16,8 @@ def parse_arguments() -> dict[str, Any]:
     parser.add_argument("--xrange", type=str)
     args = parser.parse_args()
 
-    mn, mx = args.xrange.split("-") if args.xrange is not None else None, None
-    rng = (
-        {"min": float(mn), "max": float(mx)}
-        if mn is not None and mx is not None
-        else None
-    )
+    mn, mx = args.xrange.split("-") if args.xrange else None, None
+    rng = {"min": float(mn), "max": float(mx)} if mn and mx else None
 
     return {
         "joblog": os.path.join("resources", args.joblog),
