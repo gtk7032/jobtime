@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -74,8 +74,8 @@ class Plotter:
     def plot(
         jobnets: dict[str, dict[str, Jobnet]],
         schedule: dict[str, dict[str, Jobnet]],
-        output: Optional[str],
-        xrange: Optional[dict[str, float]],
+        output: str,
+        xrange: dict[str, float],
     ):
 
         Plotter.complete(jobnets, schedule)
@@ -94,13 +94,13 @@ class Plotter:
         lbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
         y = np.arange(len(jobnets.keys()))
 
-        plt.figure(figsize=(8.0, 6.0))
+        plt.figure(figsize=(12.0, 9.0))
         plt.barh(y + 0.4, slens, left=sbtms, height=0.3, color="g", label="予定時間")
         plt.barh(y, jlens, left=jbtms, height=0.3, color="b", label="実行時間")
         plt.legend()
         plt.yticks(y, lbls)
-        plt.xlim([0, 9])
-        plt.xticks(np.arange(0, 9 + 1, 1))
+        plt.xlim([xrange["min"], xrange["max"]])
+        plt.xticks(np.arange(xrange["min"], xrange["max"] + 1, 1))
         plt.grid(color="gray", alpha=0.5)
         plt.rcParams["font.family"] = "IPAexGothic"
         plt.savefig(output, bbox_inches="tight")

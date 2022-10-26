@@ -34,11 +34,12 @@ def main():
     args = parse_arguments()
     jobnets = Jobnet.read_joblog(args["joblog"])
     schedule = Jobnet.read_schedule(args["schedule"])
-    xrange = Util.merge_xrange(
+    xrange = Util.integerize_xrange(
         Util.merge_xrange(
-            Jobnet.extract_xrange(jobnets), Jobnet.extract_xrange(schedule)
-        ),
-        args["xrange"],
+            Jobnet.extract_xrange(jobnets),
+            Jobnet.extract_xrange(schedule),
+            args["xrange"],
+        )
     )
 
     Plotter.plot(
