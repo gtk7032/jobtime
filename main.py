@@ -35,10 +35,11 @@ def main():
     jobnets = Jobnet.read_joblog(args["joblog"])
     schedule = Jobnet.read_schedule(args["schedule"])
     xrange = Util.integerize_xrange(
-        Util.merge_xrange(
+        args["xrange"]
+        if args["xrange"]
+        else Util.merge_xrange(
             Jobnet.extract_xrange(jobnets),
             Jobnet.extract_xrange(schedule),
-            args["xrange"],
         )
     )
 
