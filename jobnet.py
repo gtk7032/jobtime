@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import csv
 from datetime import datetime as dt
+from typing import Tuple
+
+import numpy as np
 
 from util import Util
 
@@ -116,6 +119,104 @@ class Jobnet:
             key=lambda x: x[1][next(iter(x[1]))].start,
         )
         return {jobid: jobnet for jobid, jobnet in jobnets}
+
+    @staticmethod
+    def get_ordr(
+        jobnets: dict[str, dict[str, Jobnet]],
+    ) -> list[str]:
+        s = sorted(jobnets.items(), key=lambda x: next(iter(x[1].values())).start)
+        return [i[0] for i in s]
+
+    @staticmethod
+    def align_order(target: dict[str, dict[str, Jobnet]], orderedkeys: list[str]):
+        return {key: target[key] for key in orderedkeys}
+
+    @staticmethod
+    def format(
+        jobnets: dict[str, dict[str, Jobnet]]
+    ) -> dict[str, list[dict[str, float]]]:
+
+        max_size = max(len(joblist) for joblist in jobnets.values())
+        fmtd = {}
+
+        for jobid, joblist in jobnets.items():
+
+            fmtd[jobid] = [
+                {"min": 0.0, "len": 0.0} for _ in range(max_size - len(joblist))
+            ]
+            fmtd[jobid].extend(
+                [
+                    {
+                        "min": job.start if job.isgenuine else 0.0,
+                        "len": max(job.get_duration(), 5 / 60)
+                        if job.isgenuine
+                        else 0.0,
+                    }
+                    for job in joblist.values()
+                ]
+            )
+        return fmtd
+
+    @staticmethod
+    def create_barh(
+        fmtd_jobnets: dict[str, list[dict[str, float]]]
+    ) -> Tuple[list[float], list[float]]:
+        btms = []
+        lens = []
+        for i in range(len(next(iter(fmtd_jobnets.values())))):
+            for jobid in fmtd_jobnets.keys():
+                btms.append(fmtd_jobnets[jobid][i]["min"])
+                lens.append(fmtd_jobnets[jobid][i]["len"])
+        return btms, lens
+
+    @staticmethod
+    def complete(
+        target: dict[str, dict[str, Jobnet]], another: dict[str, dict[str, Jobnet]]
+    ):
+        for aid, aval in another.items():
+            if aid not in target.keys():
+                target[aid] = {
+                    "0": Jobnet(
+                        aid, "0", next(iter(aval.values())).name, None, None, False
+                    )
+                }
+
+    @staticmethod
+    def get_glbordr(
+        jobnets: dict[str, dict[str, Jobnet]],
+        schedule: dict[str, dict[str, Jobnet]],
+    ) -> list[str]:
+        s = sorted(
+            jobnets.items(),
+            key=lambda x: next(iter(x[1].values())).start
+            or next(iter(schedule[x[0]].values())).start,
+        )
+        return [i[0] for i in s]
+
+    @staticmethod
+    def extract_plotdata(jobnets):
+        orderedkeys = Jobnet.get_ordr(jobnets)
+        jobnets = Jobnet.align_order(jobnets, orderedkeys)
+        fmtd_jobnets = Jobnet.format(jobnets)
+        jbtms, jlens = Jobnet.create_barh(fmtd_jobnets)
+        lbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
+        y = np.arange(len(jobnets.keys()))
+        return jbtms, jlens, y, lbls
+
+    @staticmethod
+    def extract_plotdata_with_schedule(jobnets, schedule):
+        Jobnet.complete(jobnets, schedule)
+        Jobnet.complete(schedule, jobnets)
+        orderedkeys = Jobnet.get_glbordr(jobnets, schedule)
+        jobnets = Jobnet.align_order(jobnets, orderedkeys)
+        schedule = Jobnet.align_order(schedule, orderedkeys)
+        fmtd_jobnets = Jobnet.format(jobnets)
+        fmtd_schedule = Jobnet.format(schedule)
+        jbtms, jlens = Jobnet.create_barh(fmtd_jobnets)
+        s
+        lbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
+        y = np.arange(len(jobnets.keys()))
+        return jbtms, jlens, y, lbls
 
     @staticmethod
     def show(jobnets: dict[str, dict[str, Jobnet]]):
