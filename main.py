@@ -34,19 +34,17 @@ def main():
             Jobnet.extract_xrange(schedule),
         )
     )
+
+    plotter = Plotter()
+
     if schedule:
-        Plotter.plot_with_schedule(
-            jobnets,
-            schedule,
-            args["output"],
-            xrange,
-        )
+        pass
     else:
-        Plotter.plot(
-            jobnets,
-            args["output"],
-            xrange,
-        )
+        jbtms, jlens, y, lbls = Jobnet.extract_plotdata(jobnets)
+        plotter.set_canvas(y, lbls, xrange)
+        plotter.plot_barh(y, jlens, jbtms, "b", "実行時間")
+
+    plotter.save(args["output"])
 
 
 if __name__ == "__main__":
