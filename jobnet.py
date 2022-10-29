@@ -14,19 +14,18 @@ class Jobnet:
     def __init__(
         self,
         jobnetid: str,
-        innerid: str | None,
+        innerid: str,
         name: str,
         start: float | None,
         end: float | None,
+        isgenuine: bool,
     ):
         self.jobid = jobnetid
         self.inrid = innerid
         self.name = name
         self.start = start
         self.end = end
-
-    def is_genuine(self) -> bool:
-        return self.start is not None and self.end is not None
+        self.isgenuine = isgenuine
 
     def get_duration(self) -> float:
         return self.end - self.start
@@ -62,7 +61,9 @@ class Jobnet:
                 if msg == Jobnet.START_MSG:
                     if jobid not in jobnets.keys():
                         jobnets[jobid] = {}
-                    jobnets[jobid][innerid] = Jobnet(jobid, innerid, name, date, None)
+                    jobnets[jobid][innerid] = Jobnet(
+                        jobid, innerid, name, date, None, True
+                    )
 
                 elif msg == Jobnet.END_MSG:
                     if jobid in jobnets.keys():
@@ -99,7 +100,7 @@ class Jobnet:
                 if jobid not in schedules.keys():
                     schedules[jobid] = {}
 
-                schedules[jobid][inrid] = Jobnet(jobid, inrid, jobnm, start, end)
+                schedules[jobid][inrid] = Jobnet(jobid, inrid, jobnm, start, end, True)
 
         return Jobnet.sort(schedules)
 
