@@ -11,44 +11,42 @@ from util import Util
 def parse_arguments() -> dict[str, Any]:
     parser = argparse.ArgumentParser()
     parser.add_argument("--joblog", required=True, type=str)
-    parser.add_argument("--schedule", type=str, default="schdule.csv")
+    parser.add_argument("--schedule", type=str)
     parser.add_argument("--output", type=str)
-    parser.add_argument("--xrange", type=str)
     args = parser.parse_args()
-
-    mn, mx = args.xrange.split("-") if args.xrange else None, None
-    rng = {"min": float(mn), "max": float(mx)} if mn and mx else None
-
     return {
         "joblog": os.path.join("resources", args.joblog),
-        "schedule": os.path.join("resources", args.schedule),
+        "schedule": os.path.join("resources", args.schedule) if args.schedule else None,
         "output": os.path.join(
             "output",
             args.output or pathlib.Path(args.joblog).with_suffix(".png"),
         ),
-        "xrange": (dict(zip(["min", "max"], rng)) if rng else None),
     }
 
 
 def main():
     args = parse_arguments()
     jobnets = Jobnet.read_joblog(args["joblog"])
-    schedule = Jobnet.read_schedule(args["schedule"])
+    schedule = Jobnet.read_schedule(args["schedule"]) if args["schedule"] else {}
     xrange = Util.integerize_xrange(
-        args["xrange"]
-        if args["xrange"]
-        else Util.merge_xrange(
+        Util.merge_xrange(
             Jobnet.extract_xrange(jobnets),
             Jobnet.extract_xrange(schedule),
         )
     )
-
-    Plotter.plot(
-        jobnets,
-        schedule,
-        args["output"],
-        xrange,
-    )
+    if schedule:
+        Plotter.plot_with_schedule(
+            jobnets,
+            schedule,
+            args["output"],
+            xrange,
+        )
+    else:
+        Plotter.plot(
+            jobnets,
+            args["output"],
+            xrange,
+        )
 
 
 if __name__ == "__main__":
