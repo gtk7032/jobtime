@@ -30,7 +30,8 @@ class Plotter:
             else:
                 plt.barh(y, l, left=b, height=0.3, color=clr)
 
-    def save(self, output: str) -> None:
+    def save(self, output: str, show: bool = False) -> None:
         plt.legend()
         plt.savefig(output, bbox_inches="tight")
-        plt.show()
+        if show:
+            plt.show()
