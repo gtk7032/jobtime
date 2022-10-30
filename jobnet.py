@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import csv
 from datetime import datetime as dt
-from tracemalloc import start
-from typing import Any, Tuple
+from typing import Tuple
 
 import numpy as np
 
