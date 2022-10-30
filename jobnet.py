@@ -108,30 +108,6 @@ class Jobnet:
         return Jobnet.sort(schedules)
 
     @staticmethod
-    def sort(jobnets: dict[str, dict[str, Jobnet]]) -> dict[str, dict[str, Jobnet]]:
-
-        for jn in jobnets.values():
-            sjn = sorted(jn.items(), key=lambda x: x[1].start)
-            jn = {jobid: job for jobid, job in sjn}
-
-        jobnets = sorted(
-            jobnets.items(),
-            key=lambda x: x[1][next(iter(x[1]))].start,
-        )
-        return {jobid: jobnet for jobid, jobnet in jobnets}
-
-    @staticmethod
-    def get_ordr(
-        jobnets: dict[str, dict[str, Jobnet]],
-    ) -> list[str]:
-        s = sorted(jobnets.items(), key=lambda x: next(iter(x[1].values())).start)
-        return [i[0] for i in s]
-
-    @staticmethod
-    def align_order(target: dict[str, dict[str, Jobnet]], orderedkeys: list[str]):
-        return {key: target[key] for key in orderedkeys}
-
-    @staticmethod
     def format(
         jobnets: dict[str, dict[str, Jobnet]]
     ) -> dict[str, list[dict[str, float]]]:
@@ -171,52 +147,69 @@ class Jobnet:
 
     @staticmethod
     def complete(
-        target: dict[str, dict[str, Jobnet]], another: dict[str, dict[str, Jobnet]]
-    ):
-        for aid, aval in another.items():
-            if aid not in target.keys():
-                target[aid] = {
+        fst: dict[str, dict[str, Jobnet]], scd: dict[str, dict[str, Jobnet]]
+    ) -> None:
+
+        if not fst or not scd:
+            return
+
+        keys = fst.keys() | scd.keys()
+        for key in keys:
+            if key not in fst.keys():
+                fst[key] = {
                     "0": Jobnet(
-                        aid, "0", next(iter(aval.values())).name, None, None, False
+                        key, "0", next(iter(scd[key].values())).name, None, None, False
+                    )
+                }
+            if key not in scd.keys():
+                scd[key] = {
+                    "0": Jobnet(
+                        key, "0", next(iter(fst[key].values())).name, None, None, False
                     )
                 }
 
     @staticmethod
-    def get_glbordr(
-        jobnets: dict[str, dict[str, Jobnet]],
+    def get_order(
+        joblogs: dict[str, dict[str, Jobnet]],
         schedule: dict[str, dict[str, Jobnet]],
     ) -> list[str]:
         s = sorted(
-            jobnets.items(),
+            joblogs.items(),
             key=lambda x: next(iter(x[1].values())).start
-            or next(iter(schedule[x[0]].values())).start,
+            or (
+                next(iter(schedule[x[0]].values())).start
+                if x[0] in schedule.keys() and len(schedule[x[0]]) >= 1
+                else 24
+            ),
         )
         return [i[0] for i in s]
 
     @staticmethod
-    def extract_plotdata(jobnets):
-        orderedkeys = Jobnet.get_ordr(jobnets)
-        jobnets = Jobnet.align_order(jobnets, orderedkeys)
-        fmtd_jobnets = Jobnet.format(jobnets)
-        jbtms, jlens = Jobnet.create_barh(fmtd_jobnets)
-        lbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
-        y = np.arange(len(jobnets.keys()))
-        return jbtms, jlens, y, lbls
+    def sort(
+        jobnets: dict[str, dict[str, Jobnet]], sortedkeys: list[str] = None
+    ) -> dict[str, dict[str, Jobnet]]:
+
+        if sortedkeys:
+            return {key: jobnets[key] for key in sortedkeys}
+
+        for jn in jobnets.values():
+            sjn = sorted(jn.items(), key=lambda x: x[1].start)
+            jn = {jobid: job for jobid, job in sjn}
+
+        jobnets = sorted(
+            jobnets.items(),
+            key=lambda x: x[1][next(iter(x[1]))].start,
+        )
+        return {jobid: jobnet for jobid, jobnet in jobnets}
 
     @staticmethod
-    def extract_plotdata_with_schedule(jobnets, schedule):
-        Jobnet.complete(jobnets, schedule)
-        Jobnet.complete(schedule, jobnets)
-        orderedkeys = Jobnet.get_glbordr(jobnets, schedule)
-        jobnets = Jobnet.align_order(jobnets, orderedkeys)
-        schedule = Jobnet.align_order(schedule, orderedkeys)
+    def extract_plotdata(jobnets, sortedkeys):
+        jobnets = Jobnet.sort(jobnets, sortedkeys)
         fmtd_jobnets = Jobnet.format(jobnets)
-        fmtd_schedule = Jobnet.format(schedule)
-        jbtms, jlens = Jobnet.create_barh(fmtd_jobnets)
-        s
-        lbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
-        y = np.arange(len(jobnets.keys()))
-        return jbtms, jlens, y, lbls
+        btms, lens = Jobnet.create_barh(fmtd_jobnets)
+        ylbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
+        yticks = np.arange(len(jobnets.keys()))
+        return btms, lens, yticks, ylbls
 
     @staticmethod
     def show(jobnets: dict[str, dict[str, Jobnet]]):

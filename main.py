@@ -26,24 +26,25 @@ def parse_arguments() -> dict[str, Any]:
 
 def main():
     args = parse_arguments()
-    jobnets = Jobnet.read_joblog(args["joblog"])
+    joblogs = Jobnet.read_joblog(args["joblog"])
     schedule = Jobnet.read_schedule(args["schedule"]) if args["schedule"] else {}
     xrange = Util.integerize_xrange(
         Util.merge_xrange(
-            Jobnet.extract_xrange(jobnets),
+            Jobnet.extract_xrange(joblogs),
             Jobnet.extract_xrange(schedule),
         )
     )
 
+    Jobnet.complete(joblogs, schedule)
+    sortedkeys = Jobnet.get_order(joblogs, schedule)
+    jbtms, jlens, y, lbls = Jobnet.extract_plotdata(joblogs, sortedkeys)
+
     plotter = Plotter()
-
+    plotter.set_canvas(y, lbls, xrange)
     if schedule:
-        pass
-    else:
-        jbtms, jlens, y, lbls = Jobnet.extract_plotdata(jobnets)
-        plotter.set_canvas(y, lbls, xrange)
-        plotter.plot_barh(y, jlens, jbtms, "b", "実行時間")
-
+        sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule, sortedkeys)
+        plotter.plot_barh(y + 0.4, slens, sbtms, "g", "予定時間")
+    plotter.plot_barh(y, jlens, jbtms, "b", "実行時間")
     plotter.save(args["output"])
 
 
