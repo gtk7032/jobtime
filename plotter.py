@@ -13,7 +13,6 @@ class Plotter:
         figsize: Tuple[int, int],
     ) -> None:
         plt.figure(figsize=figsize)
-        print(plt.rcParams["figure.dpi"])
         plt.yticks(yticks, ylbls)
         plt.xlim([xrange["min"], xrange["max"]])
         plt.xticks(np.arange(xrange["min"], xrange["max"] + 1, 1))
