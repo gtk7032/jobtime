@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import csv
 from datetime import datetime as dt
-from typing import Tuple
+from typing import Any, Tuple
 
 import numpy as np
 
@@ -175,11 +175,8 @@ class Jobnet:
         s = sorted(
             joblogs.items(),
             key=lambda x: next(iter(x[1].values())).start
-            or (
-                next(iter(schedule[x[0]].values())).start
-                if x[0] in schedule.keys() and len(schedule[x[0]]) >= 1
-                else 24
-            ),
+            if next(iter(x[1].values())).isgenuine
+            else next(iter(schedule[x[0]].values())).start,
         )
         return [i[0] for i in s]
 
@@ -204,7 +201,7 @@ class Jobnet:
     @staticmethod
     def extract_plotdata(
         jobnets, sortedkeys
-    ) -> Tuple[list[list[float]], list[list[float]], list[int], list[str]]:
+    ) -> Tuple[list[list[float]], list[list[float]], Any, list[str]]:
         jobnets = Jobnet.sort(jobnets, sortedkeys)
         fmtd_jobnets = Jobnet.format(jobnets)
         btms, lens = Jobnet.create_barh(fmtd_jobnets)

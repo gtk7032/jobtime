@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -15,15 +17,18 @@ class Plotter:
 
     def plot_barh(
         self,
-        y: list[float],
+        y: Any,
         lens: list[list[float]],
         btms: list[list[float]],
         clr: str,
-        lbl: list[str],
+        lbl: str,
     ) -> None:
 
-        for b, l in zip(btms, lens):
-            plt.barh(y, l, left=b, height=0.3, color=clr, label=lbl)
+        for i, (b, l) in enumerate(zip(btms, lens)):
+            if i:
+                plt.barh(y, l, left=b, height=0.3, color=clr, label=lbl)
+            else:
+                plt.barh(y, l, left=b, height=0.3, color=clr)
 
     def save(self, output: str) -> None:
         plt.legend()
