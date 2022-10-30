@@ -13,6 +13,7 @@ def parse_arguments() -> dict[str, Any]:
     parser.add_argument("--joblog", required=True, type=str)
     parser.add_argument("--schedule", type=str)
     parser.add_argument("--output", type=str)
+    parser.add_argument("--figsize", type=str)
     parser.add_argument("--show", type=str, default="false")
     args = parser.parse_args()
     return {
@@ -23,6 +24,9 @@ def parse_arguments() -> dict[str, Any]:
             args.output or pathlib.Path(args.joblog).with_suffix(".png"),
         ),
         "show": args.show.upper() == "TRUE",
+        "figsize": tuple(int(fs) for fs in args.figsize.split("-"))
+        if args.figsize
+        else (16, 9),
     }
 
 
@@ -36,16 +40,15 @@ def main():
             Jobnet.extract_xrange(schedule),
         )
     )
-
     Jobnet.complete(joblogs, schedule)
     sortedkeys = Jobnet.get_order(joblogs, schedule)
-    joblogs = Jobnet.sort_with_givenkeys(joblogs, sortedkeys)
-    schedule = Jobnet.sort_with_givenkeys(schedule, sortedkeys)
+    joblogs = Jobnet.sortby_givenkeys(joblogs, sortedkeys)
+    schedule = Jobnet.sortby_givenkeys(schedule, sortedkeys)
 
     jbtms, jlens, yticks, ylbls = Jobnet.extract_plotdata(joblogs)
 
     plotter = Plotter()
-    plotter.set_canvas(yticks, ylbls, xrange)
+    plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
     if schedule:
         sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule)
         plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "予定時間")

@@ -181,7 +181,7 @@ class Jobnet:
         return [i[0] for i in s]
 
     @staticmethod
-    def sort_with_givenkeys(
+    def sortby_givenkeys(
         jobnets: dict[str, dict[str, Jobnet]], keys: list[str]
     ) -> dict[str, dict[str, Jobnet]]:
         if keys:

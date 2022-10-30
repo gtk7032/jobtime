@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -6,9 +6,14 @@ from matplotlib import pyplot as plt
 
 class Plotter:
     def set_canvas(
-        self, yticks: list[float], ylbls: list[str], xrange: dict[str, float]
+        self,
+        yticks: list[float],
+        ylbls: list[str],
+        xrange: dict[str, float],
+        figsize: Tuple[int, int],
     ) -> None:
-        plt.figure(figsize=(12.0, 9.0))
+        plt.figure(figsize=figsize)
+        print(plt.rcParams["figure.dpi"])
         plt.yticks(yticks, ylbls)
         plt.xlim([xrange["min"], xrange["max"]])
         plt.xticks(np.arange(xrange["min"], xrange["max"] + 1, 1))
