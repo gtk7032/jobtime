@@ -13,8 +13,17 @@ class Plotter:
         plt.grid(color="gray", alpha=0.5)
         plt.rcParams["font.family"] = "IPAexGothic"
 
-    def plot_barh(self, y, lens, btms, clr, lbl) -> None:
-        plt.barh(y, lens, left=btms, height=0.3, color=clr, label=lbl)
+    def plot_barh(
+        self,
+        y: list[float],
+        lens: list[list[float]],
+        btms: list[list[float]],
+        clr: str,
+        lbl: list[str],
+    ) -> None:
+
+        for b, l in zip(btms, lens):
+            plt.barh(y, l, left=b, height=0.3, color=clr, label=lbl)
 
     def save(self, output: str) -> None:
         plt.legend()

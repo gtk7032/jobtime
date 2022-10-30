@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import csv
 from datetime import datetime as dt
-from typing import Tuple
+from tracemalloc import start
+from typing import Any, Tuple
 
 import numpy as np
 
@@ -116,18 +117,14 @@ class Jobnet:
         fmtd = {}
 
         for jobid, joblist in jobnets.items():
-
             fmtd[jobid] = [
-                {"min": 0.0, "len": 0.0} for _ in range(max_size - len(joblist))
+                {"btm": 0.0, "len": 0.0} for _ in range(max_size - len(joblist))
             ]
             fmtd[jobid].extend(
                 [
-                    {
-                        "min": job.start if job.isgenuine else 0.0,
-                        "len": max(job.get_duration(), 5 / 60)
-                        if job.isgenuine
-                        else 0.0,
-                    }
+                    {"btm": job.start, "len": max(job.get_duration(), 5 / 60)}
+                    if job.isgenuine
+                    else {"btm": 0.0, "len": 0.0}
                     for job in joblist.values()
                 ]
             )
@@ -136,13 +133,16 @@ class Jobnet:
     @staticmethod
     def create_barh(
         fmtd_jobnets: dict[str, list[dict[str, float]]]
-    ) -> Tuple[list[float], list[float]]:
+    ) -> Tuple[list[list[float]], list[list[float]]]:
         btms = []
         lens = []
         for i in range(len(next(iter(fmtd_jobnets.values())))):
+            b, l = [], []
             for jobid in fmtd_jobnets.keys():
-                btms.append(fmtd_jobnets[jobid][i]["min"])
-                lens.append(fmtd_jobnets[jobid][i]["len"])
+                b.append(fmtd_jobnets[jobid][i]["btm"])
+                l.append(fmtd_jobnets[jobid][i]["len"])
+            btms.append(b)
+            lens.append(l)
         return btms, lens
 
     @staticmethod
@@ -203,7 +203,9 @@ class Jobnet:
         return {jobid: jobnet for jobid, jobnet in jobnets}
 
     @staticmethod
-    def extract_plotdata(jobnets, sortedkeys):
+    def extract_plotdata(
+        jobnets, sortedkeys
+    ) -> Tuple[list[list[float]], list[list[float]], list[int], list[str]]:
         jobnets = Jobnet.sort(jobnets, sortedkeys)
         fmtd_jobnets = Jobnet.format(jobnets)
         btms, lens = Jobnet.create_barh(fmtd_jobnets)
