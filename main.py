@@ -37,14 +37,17 @@ def main():
 
     Jobnet.complete(joblogs, schedule)
     sortedkeys = Jobnet.get_order(joblogs, schedule)
-    jbtms, jlens, y, lbls = Jobnet.extract_plotdata(joblogs, sortedkeys)
+    joblogs = Jobnet.sort_with_givenkeys(joblogs, sortedkeys)
+    schedule = Jobnet.sort_with_givenkeys(schedule, sortedkeys)
+
+    jbtms, jlens, y, lbls = Jobnet.extract_plotdata(joblogs)
 
     plotter = Plotter()
     plotter.set_canvas(y, lbls, xrange)
     if schedule:
-        sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule, sortedkeys)
-        plotter.plot_barh(y + 0.4, slens, sbtms, "g", "予定時間")
-    plotter.plot_barh(y, jlens, jbtms, "b", "実行時間")
+        sbtms, slens, sy, slbls = Jobnet.extract_plotdata(schedule)
+        plotter.plot_barh(y + 0.2, slens, sbtms, "g", "予定時間")
+    plotter.plot_barh(y - 0.2, jlens, jbtms, "b", "実行時間")
     plotter.save(args["output"])
 
 
