@@ -13,6 +13,7 @@ def parse_arguments() -> dict[str, Any]:
     parser.add_argument("--joblog", required=True, type=str)
     parser.add_argument("--schedule", type=str)
     parser.add_argument("--output", type=str)
+    parser.add_argument("--show", type=str, default="false")
     args = parser.parse_args()
     return {
         "joblog": os.path.join("resources", args.joblog),
@@ -21,6 +22,7 @@ def parse_arguments() -> dict[str, Any]:
             "output",
             args.output or pathlib.Path(args.joblog).with_suffix(".png"),
         ),
+        "show": args.show.upper() == "TRUE",
     }
 
 
@@ -40,15 +42,15 @@ def main():
     joblogs = Jobnet.sort_with_givenkeys(joblogs, sortedkeys)
     schedule = Jobnet.sort_with_givenkeys(schedule, sortedkeys)
 
-    jbtms, jlens, y, lbls = Jobnet.extract_plotdata(joblogs)
+    jbtms, jlens, yticks, ylbls = Jobnet.extract_plotdata(joblogs)
 
     plotter = Plotter()
-    plotter.set_canvas(y, lbls, xrange)
+    plotter.set_canvas(yticks, ylbls, xrange)
     if schedule:
-        sbtms, slens, sy, slbls = Jobnet.extract_plotdata(schedule)
-        plotter.plot_barh(y + 0.2, slens, sbtms, "g", "予定時間")
-    plotter.plot_barh(y - 0.2, jlens, jbtms, "b", "実行時間")
-    plotter.save(args["output"])
+        sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule)
+        plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "予定時間")
+    plotter.plot_barh(yticks - 0.2, jlens, jbtms, "b", "実行時間")
+    plotter.save(args["output"], args["show"])
 
 
 if __name__ == "__main__":
