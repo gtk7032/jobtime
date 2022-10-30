@@ -181,12 +181,16 @@ class Jobnet:
         return [i[0] for i in s]
 
     @staticmethod
-    def sort(
-        jobnets: dict[str, dict[str, Jobnet]], sortedkeys: list[str] = None
+    def sort_with_givenkeys(
+        jobnets: dict[str, dict[str, Jobnet]], keys: list[str]
     ) -> dict[str, dict[str, Jobnet]]:
+        if keys:
+            return {key: jobnets[key] for key in keys}
+        else:
+            return jobnets
 
-        if sortedkeys:
-            return {key: jobnets[key] for key in sortedkeys}
+    @staticmethod
+    def sort(jobnets: dict[str, dict[str, Jobnet]]) -> dict[str, dict[str, Jobnet]]:
 
         for jn in jobnets.values():
             sjn = sorted(jn.items(), key=lambda x: x[1].start)
@@ -200,9 +204,8 @@ class Jobnet:
 
     @staticmethod
     def extract_plotdata(
-        jobnets, sortedkeys
+        jobnets,
     ) -> Tuple[list[list[float]], list[list[float]], Any, list[str]]:
-        jobnets = Jobnet.sort(jobnets, sortedkeys)
         fmtd_jobnets = Jobnet.format(jobnets)
         btms, lens = Jobnet.create_barh(fmtd_jobnets)
         ylbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
