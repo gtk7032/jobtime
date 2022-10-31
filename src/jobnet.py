@@ -69,7 +69,7 @@ class Jobnet:
                     )
 
                 elif msg in Jobnet.END_MSG:
-                    if jobid in jobnets.keys():
+                    if jobid in jobnets.keys() and innerid in jobnets[jobid].keys():
                         jobnets[jobid][innerid].end = date
 
         now = Util.cvrt_to_hour(dt.now())
@@ -145,7 +145,7 @@ class Jobnet:
         return btms, lens
 
     @staticmethod
-    def complete(
+    def complement(
         fst: dict[str, dict[str, Jobnet]], scd: dict[str, dict[str, Jobnet]]
     ) -> None:
 
@@ -184,7 +184,7 @@ class Jobnet:
     def sortby_givenkeys(
         jobnets: dict[str, dict[str, Jobnet]], keys: list[str]
     ) -> dict[str, dict[str, Jobnet]]:
-        if keys:
+        if jobnets and keys:
             return {key: jobnets[key] for key in keys}
         else:
             return jobnets
