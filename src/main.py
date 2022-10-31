@@ -40,7 +40,7 @@ def main():
             Jobnet.extract_xrange(schedule),
         )
     )
-    Jobnet.complete(joblogs, schedule)
+    Jobnet.complement(joblogs, schedule)
     sortedkeys = Jobnet.get_order(joblogs, schedule)
     joblogs = Jobnet.sortby_givenkeys(joblogs, sortedkeys)
     schedule = Jobnet.sortby_givenkeys(schedule, sortedkeys)
