@@ -24,7 +24,7 @@ def parse_arguments() -> dict[str, Any]:
             args.output or pathlib.Path(args.joblog).with_suffix(".png"),
         ),
         "show": args.show.upper() == "TRUE",
-        "figsize": tuple(int(fs) for fs in args.figsize.split("-"))
+        "figsize": tuple(int(fs) for fs in args.figsize.split(":"))
         if args.figsize
         else (16, 9),
     }
@@ -51,8 +51,8 @@ def main():
     plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
     if schedule:
         sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule)
-        plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "予定時間")
-    plotter.plot_barh(yticks - 0.2, jlens, jbtms, "b", "実行時間")
+        plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "exec-time")
+    plotter.plot_barh(yticks - 0.2, jlens, jbtms, "b", "schedule")
     plotter.save(args["output"], args["show"])
 
 

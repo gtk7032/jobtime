@@ -21,7 +21,7 @@ class Plotter:
 
     def plot_barh(
         self,
-        y: Any,
+        yticks: Any,
         lens: list[list[float]],
         btms: list[list[float]],
         clr: str,
@@ -29,10 +29,10 @@ class Plotter:
     ) -> None:
 
         for i, (b, l) in enumerate(zip(btms, lens)):
-            if i:
-                plt.barh(y, l, left=b, height=0.3, color=clr, label=lbl)
+            if not i:
+                plt.barh(yticks, l, left=b, height=0.3, color=clr, label=lbl)
             else:
-                plt.barh(y, l, left=b, height=0.3, color=clr)
+                plt.barh(yticks, l, left=b, height=0.3, color=clr)
 
     def save(self, output: str, show: bool = False) -> None:
         plt.legend()

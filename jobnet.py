@@ -11,8 +11,8 @@ from util import Util
 
 class Jobnet:
 
-    START_MSG = "ジョブネットが開始しました。"
-    END_MSG = "ジョブネットが終了しました。"
+    START_MSG = ["ジョブネットが開始しました。", "Jobnet has started."]
+    END_MSG = ["ジョブネットが終了しました。", "Jobnet has ended."]
 
     def __init__(
         self,
@@ -61,14 +61,14 @@ class Jobnet:
                 msg = row["message"]
                 name = row["jobnet name"]
 
-                if msg == Jobnet.START_MSG:
+                if msg in Jobnet.START_MSG:
                     if jobid not in jobnets.keys():
                         jobnets[jobid] = {}
                     jobnets[jobid][innerid] = Jobnet(
                         jobid, innerid, name, date, None, True
                     )
 
-                elif msg == Jobnet.END_MSG:
+                elif msg in Jobnet.END_MSG:
                     if jobid in jobnets.keys():
                         jobnets[jobid][innerid].end = date
 
@@ -160,7 +160,7 @@ class Jobnet:
                         key, "0", next(iter(scd[key].values())).name, None, None, False
                     )
                 }
-            if key not in scd.keys():
+            elif key not in scd.keys():
                 scd[key] = {
                     "0": Jobnet(
                         key, "0", next(iter(fst[key].values())).name, None, None, False
