@@ -51,8 +51,8 @@ def main():
     plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
     if schedule:
         sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule)
-        plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "exec-time")
-    plotter.plot_barh(yticks - 0.2, jlens, jbtms, "b", "schedule")
+        plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "schedule")
+    plotter.plot_barh(yticks - 0.2, jlens, jbtms, "b", "exec-time")
     plotter.save(args["output"], args["show"])
 
 
