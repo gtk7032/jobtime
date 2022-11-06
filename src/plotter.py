@@ -36,14 +36,11 @@ class Plotter:
                     plt.barh(yticks, ln, left=btm, height=0.3, color=clrs)
 
         else:
-
-            max_id = 0
-            for clr in clrs:
-                max_id = max(max_id, len(set(clr)))
-
+            showed_label = False
             for i, (btm, ln, clr) in enumerate(zip(btms, lens, clrs)):
-                if i == max_id:
+                if not showed_label and "b" in clr:
                     plt.barh(yticks, ln, left=btm, height=0.3, color=clr, label=lbl)
+                    showed_label = True
                 else:
                     plt.barh(yticks, ln, left=btm, height=0.3, color=clr)
 
