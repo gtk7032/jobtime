@@ -24,26 +24,20 @@ class Plotter:
         yticks: Any,
         lens: list[list[float]],
         btms: list[list[float]],
-        clrs: Union[str, list[list[str]]],
-        lbl: str,
+        clrs: list[list[str]],
+        lbls: dict[str, str],
     ) -> None:
 
-        if isinstance(clrs, str):
-            for i, (btm, ln) in enumerate(zip(btms, lens)):
-                if not i:
-                    plt.barh(yticks, ln, left=btm, height=0.3, color=clrs, label=lbl)
-                else:
-                    plt.barh(yticks, ln, left=btm, height=0.3, color=clrs)
-
-        else:
-            clr_set = {c for clr in clrs for c in clr}
-            dmyv = [0.0 for _ in range(len(yticks))]
-            if "b" in clr_set:
-                plt.barh(yticks, dmyv, left=dmyv, color="b", label=lbl + "(in time)")
-            if "r" in clr_set:
-                plt.barh(yticks, dmyv, left=dmyv, color="r", label=lbl + "(overtime)")
-            for btm, ln, clr in zip(btms, lens, clrs):
-                plt.barh(yticks, ln, left=btm, height=0.3, color=clr)
+        clr_set = {c for clr in clrs for c in clr}
+        dmyv = [0.0 for _ in range(len(yticks))]
+        if "g" in clr_set:
+            plt.barh(yticks, dmyv, left=dmyv, color="g", label=lbls["g"])
+        if "b" in clr_set:
+            plt.barh(yticks, dmyv, left=dmyv, color="b", label=lbls["b"])
+        if "r" in clr_set:
+            plt.barh(yticks, dmyv, left=dmyv, color="r", label=lbls["r"])
+        for btm, ln, clr in zip(btms, lens, clrs):
+            plt.barh(yticks, ln, left=btm, height=0.3, color=clr)
 
     def save(self, output: str, show: bool = False) -> None:
         plt.legend()
