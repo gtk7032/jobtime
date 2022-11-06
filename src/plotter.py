@@ -3,8 +3,6 @@ from typing import Any, Tuple, Union
 import numpy as np
 from matplotlib import pyplot as plt
 
-from util import Util
-
 
 class Plotter:
     def set_canvas(
