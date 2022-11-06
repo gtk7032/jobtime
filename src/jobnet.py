@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import math
 from datetime import datetime as dt
 from typing import Any, Tuple
 
@@ -146,26 +147,20 @@ class Jobnet:
 
     @staticmethod
     def complement(
-        fst: dict[str, dict[str, Jobnet]], scd: dict[str, dict[str, Jobnet]]
-    ) -> None:
+        tgt: dict[str, dict[str, Jobnet]], ref: dict[str, dict[str, Jobnet]]
+    ) -> dict[str, dict[str, Jobnet]]:
 
-        if not fst or not scd:
-            return
+        res = {k: v for k, v in tgt.items() if k in ref.keys()}
 
-        keys = fst.keys() | scd.keys()
-        for key in keys:
-            if key not in fst.keys():
-                fst[key] = {
+        for key in ref.keys():
+            if key not in res.keys():
+                res[key] = {
                     "0": Jobnet(
-                        key, "0", next(iter(scd[key].values())).name, None, None, False
+                        key, "0", next(iter(ref[key].values())).name, None, None, False
                     )
                 }
-            elif key not in scd.keys():
-                scd[key] = {
-                    "0": Jobnet(
-                        key, "0", next(iter(fst[key].values())).name, None, None, False
-                    )
-                }
+
+        return res
 
     @staticmethod
     def get_order(
@@ -204,13 +199,86 @@ class Jobnet:
 
     @staticmethod
     def extract_plotdata(
-        jobnets,
+        jobnets: dict[str, dict[str, Jobnet]],
     ) -> Tuple[list[list[float]], list[list[float]], Any, list[str]]:
         fmtd_jobnets = Jobnet.format(jobnets)
         btms, lens = Jobnet.create_barh(fmtd_jobnets)
         ylbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
         yticks = np.arange(len(jobnets.keys()))
         return btms, lens, yticks, ylbls
+
+    @staticmethod
+    def map_bars(
+        jbtms: list[list[float]],
+        jlens: list[list[float]],
+        sbtms: list[list[float]],
+        slens: list[list[float]],
+    ) -> list[list[int]]:
+        max_jx = len(jbtms)
+        max_sx = len(sbtms)
+        max_y = len(jbtms[0])
+
+        print(max_jx, max_sx, max_y)
+
+        map_x: list[list[int]] = [[] * max_y] * max_jx
+        map_dist: list[list[float]] = [[] * max_y] * max_jx
+
+        for y in range(max_y):
+
+            for jx in range(max_jx):
+                pair_sx, min_dist = -1, 24.0
+                for sx in range(max_sx):
+                    jbtm = jbtms[jx][y]
+                    sbtm = sbtms[sx][y]
+                    jlen = jlens[jx][y]
+                    slen = slens[sx][y]
+                    dist = math.fabs(jbtm - sbtm) + math.fabs(
+                        (jbtm + jlen) - (sbtm + slen)
+                    )
+                    if dist < min_dist:
+                        pair_sx, min_dist = sx, dist
+                map_x[jx][y] = pair_sx
+                map_dist[jx][y] = min_dist
+
+            for jx in range(max_jx - 1):
+                for kx in range(jx + 1, max_jx, 1):
+                    if not map_x[jx][y]:
+                        continue
+                    if map_x[jx][y] != map_x[kx][y]:
+                        continue
+                    if map_dist[jx][y] > map_dist[kx][y]:
+                        map_x[jx][y] = -1
+                    else:
+                        map_x[kx][y] = -1
+
+        return map_x
+
+    @staticmethod
+    def create_colormap(
+        jbtms: list[list[float]],
+        jlens: list[list[float]],
+        sbtms: list[list[float]],
+        slens: list[list[float]],
+        bar_map: list[list[int]],
+    ) -> list[list[str]]:
+
+        max_jx = len(jbtms)
+        max_y = len(jbtms[0])
+        clrs: list[list[str]] = [[] * max_y] * max_jx
+
+        for x, col in enumerate(bar_map):
+            for y, tgt in enumerate(col):
+                if tgt == -1:
+                    continue
+                if (
+                    jbtms[x][y] >= sbtms[tgt][y]
+                    and jbtms[x][y] + jlens[x][y] <= sbtms[tgt][y] + slens[tgt][y]
+                ):
+                    clrs[x][y] = "b"
+                else:
+                    clrs[x][y] = "r"
+
+        return clrs
 
     @staticmethod
     def show(jobnets: dict[str, dict[str, Jobnet]]):
