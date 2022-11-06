@@ -39,9 +39,9 @@ class Plotter:
             clr_set = {c for clr in clrs for c in clr}
             dmyv = [0.0 for _ in range(len(yticks))]
             if "b" in clr_set:
-                plt.barh(yticks, dmyv, left=dmyv, color="b", label=lbl)
+                plt.barh(yticks, dmyv, left=dmyv, color="b", label=lbl + "(in time)")
             if "r" in clr_set:
-                plt.barh(yticks, dmyv, left=dmyv, color="r", label=lbl)
+                plt.barh(yticks, dmyv, left=dmyv, color="r", label=lbl + "(overtime)")
             for btm, ln, clr in zip(btms, lens, clrs):
                 plt.barh(yticks, ln, left=btm, height=0.3, color=clr)
 

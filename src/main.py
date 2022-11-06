@@ -55,9 +55,9 @@ def main():
         jclrs = Jobnet.create_colormap(
             jbtms, jlens, sbtms, slens, Jobnet.map_bars(jbtms, jlens, sbtms, slens)
         )
-        plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "schedule")
+        plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "scheduled")
 
-    plotter.plot_barh(yticks - 0.2, jlens, jbtms, jclrs or "b", "exec-time")
+    plotter.plot_barh(yticks - 0.2, jlens, jbtms, jclrs or "b", "executed")
     plotter.save(args["output"], args["show"])
 
 
