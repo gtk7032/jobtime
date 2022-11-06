@@ -3,6 +3,8 @@ from typing import Any, Tuple, Union
 import numpy as np
 from matplotlib import pyplot as plt
 
+from util import Util
+
 
 class Plotter:
     def set_canvas(
@@ -36,13 +38,14 @@ class Plotter:
                     plt.barh(yticks, ln, left=btm, height=0.3, color=clrs)
 
         else:
-            showed_label = False
-            for i, (btm, ln, clr) in enumerate(zip(btms, lens, clrs)):
-                if not showed_label and "b" in clr:
-                    plt.barh(yticks, ln, left=btm, height=0.3, color=clr, label=lbl)
-                    showed_label = True
-                else:
-                    plt.barh(yticks, ln, left=btm, height=0.3, color=clr)
+            clr_set = {c for clr in clrs for c in clr}
+            dmyv = [0.0 for _ in range(len(yticks))]
+            if "b" in clr_set:
+                plt.barh(yticks, dmyv, left=dmyv, color="b", label=lbl)
+            if "r" in clr_set:
+                plt.barh(yticks, dmyv, left=dmyv, color="r", label=lbl)
+            for btm, ln, clr in zip(btms, lens, clrs):
+                plt.barh(yticks, ln, left=btm, height=0.3, color=clr)
 
     def save(self, output: str, show: bool = False) -> None:
         plt.legend()
