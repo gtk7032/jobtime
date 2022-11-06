@@ -40,7 +40,7 @@ def main():
             Jobnet.extract_xrange(schedule),
         )
     )
-    Jobnet.complement(joblogs, schedule)
+    schedule = Jobnet.complement(schedule, joblogs)
     sortedkeys = Jobnet.get_order(joblogs, schedule)
     joblogs = Jobnet.sortby_givenkeys(joblogs, sortedkeys)
     schedule = Jobnet.sortby_givenkeys(schedule, sortedkeys)
@@ -49,10 +49,15 @@ def main():
 
     plotter = Plotter()
     plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
+
     if schedule:
         sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule)
+        jclrs = Jobnet.create_colormap(
+            jbtms, jlens, sbtms, slens, Jobnet.map_bars(jbtms, jlens, sbtms, slens)
+        )
         plotter.plot_barh(yticks + 0.2, slens, sbtms, "g", "schedule")
-    plotter.plot_barh(yticks - 0.2, jlens, jbtms, "b", "exec-time")
+
+    plotter.plot_barh(yticks - 0.2, jlens, jbtms, jclrs or "b", "exec-time")
     plotter.save(args["output"], args["show"])
 
 

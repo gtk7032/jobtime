@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Any, Tuple, Union
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -24,15 +24,28 @@ class Plotter:
         yticks: Any,
         lens: list[list[float]],
         btms: list[list[float]],
-        clr: str,
+        clrs: Union[str, list[list[str]]],
         lbl: str,
     ) -> None:
 
-        for i, (b, l) in enumerate(zip(btms, lens)):
-            if not i:
-                plt.barh(yticks, l, left=b, height=0.3, color=clr, label=lbl)
-            else:
-                plt.barh(yticks, l, left=b, height=0.3, color=clr)
+        if isinstance(clrs, str):
+            for i, (btm, ln) in enumerate(zip(btms, lens)):
+                if not i:
+                    plt.barh(yticks, ln, left=btm, height=0.3, color=clrs, label=lbl)
+                else:
+                    plt.barh(yticks, ln, left=btm, height=0.3, color=clrs)
+
+        else:
+
+            max_id = 0
+            for clr in clrs:
+                max_id = max(max_id, len(set(clr)))
+
+            for i, (btm, ln, clr) in enumerate(zip(btms, lens, clrs)):
+                if i == max_id:
+                    plt.barh(yticks, ln, left=btm, height=0.3, color=clr, label=lbl)
+                else:
+                    plt.barh(yticks, ln, left=btm, height=0.3, color=clr)
 
     def save(self, output: str, show: bool = False) -> None:
         plt.legend()
