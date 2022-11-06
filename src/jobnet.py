@@ -150,6 +150,9 @@ class Jobnet:
         tgt: dict[str, dict[str, Jobnet]], ref: dict[str, dict[str, Jobnet]]
     ) -> dict[str, dict[str, Jobnet]]:
 
+        if not tgt or not ref:
+            return tgt
+
         res = {k: v for k, v in tgt.items() if k in ref.keys()}
 
         for key in ref.keys():
@@ -165,14 +168,8 @@ class Jobnet:
     @staticmethod
     def get_order(
         joblogs: dict[str, dict[str, Jobnet]],
-        schedule: dict[str, dict[str, Jobnet]],
     ) -> list[str]:
-        s = sorted(
-            joblogs.items(),
-            key=lambda x: next(iter(x[1].values())).start
-            if next(iter(x[1].values())).isgenuine
-            else next(iter(schedule[x[0]].values())).start,
-        )
+        s = sorted(joblogs.items(), key=lambda x: next(iter(x[1].values())).start)
         return [i[0] for i in s]
 
     @staticmethod
@@ -214,19 +211,16 @@ class Jobnet:
         sbtms: list[list[float]],
         slens: list[list[float]],
     ) -> list[list[int]]:
+
         max_jx = len(jbtms)
         max_sx = len(sbtms)
         max_y = len(jbtms[0])
-
-        print(max_jx, max_sx, max_y)
-
-        map_x: list[list[int]] = [[] * max_y] * max_jx
-        map_dist: list[list[float]] = [[] * max_y] * max_jx
+        map_x: list[list[int]] = [[-1] * max_y for _ in range(max_jx)]
+        map_dist: list[list[float]] = [[24.0] * max_y for _ in range(max_jx)]
 
         for y in range(max_y):
 
             for jx in range(max_jx):
-                pair_sx, min_dist = -1, 24.0
                 for sx in range(max_sx):
                     jbtm = jbtms[jx][y]
                     sbtm = sbtms[sx][y]
@@ -235,15 +229,13 @@ class Jobnet:
                     dist = math.fabs(jbtm - sbtm) + math.fabs(
                         (jbtm + jlen) - (sbtm + slen)
                     )
-                    if dist < min_dist:
-                        pair_sx, min_dist = sx, dist
-                map_x[jx][y] = pair_sx
-                map_dist[jx][y] = min_dist
+                    if dist < map_dist[jx][y]:
+                        map_x[jx][y], map_dist[jx][y] = sx, dist
 
             for jx in range(max_jx - 1):
+                if map_x[jx][y] == -1:
+                    continue
                 for kx in range(jx + 1, max_jx, 1):
-                    if not map_x[jx][y]:
-                        continue
                     if map_x[jx][y] != map_x[kx][y]:
                         continue
                     if map_dist[jx][y] > map_dist[kx][y]:
@@ -264,7 +256,7 @@ class Jobnet:
 
         max_jx = len(jbtms)
         max_y = len(jbtms[0])
-        clrs: list[list[str]] = [[] * max_y] * max_jx
+        clrs: list[list[str]] = [["b"] * max_y for _ in range(max_jx)]
 
         for x, col in enumerate(bar_map):
             for y, tgt in enumerate(col):

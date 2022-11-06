@@ -41,7 +41,7 @@ def main():
         )
     )
     schedule = Jobnet.complement(schedule, joblogs)
-    sortedkeys = Jobnet.get_order(joblogs, schedule)
+    sortedkeys = Jobnet.get_order(joblogs)
     joblogs = Jobnet.sortby_givenkeys(joblogs, sortedkeys)
     schedule = Jobnet.sortby_givenkeys(schedule, sortedkeys)
 
