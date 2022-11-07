@@ -40,8 +40,6 @@ def main():
             Jobnet.extract_xrange(schedule),
         )
     )
-    schedule = Jobnet.complement(schedule, joblogs)
-    schedule = Jobnet.sortby_givenkeys(schedule, Jobnet.get_order(joblogs))
 
     jbtms, jlens, yticks, ylbls = Jobnet.extract_plotdata(joblogs)
 
@@ -49,8 +47,10 @@ def main():
     plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
 
     if schedule:
+        schedule = Jobnet.complement(schedule, joblogs)
+        schedule = Jobnet.sortby_givenkeys(schedule, Jobnet.get_order(joblogs))
         sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule)
-        sclrs = [["g"] * len(slens[0]) for _ in range(len(slens))]
+        sclrs = Plotter.create_single_colormap(len(slens), len(slens[0]), "g")
         plotter.plot_barh(yticks + 0.2, slens, sbtms, sclrs, {"g": "scheduled"})
 
     plotter.plot_barh(
@@ -61,7 +61,7 @@ def main():
             jbtms, jlens, sbtms, slens, Jobnet.map_bars(jbtms, jlens, sbtms, slens)
         )
         if schedule
-        else [["b"] * len(jlens[0]) for _ in range(len(jlens))],
+        else Plotter.create_single_colormap(len(jlens), len(jlens[0]), "b"),
         {"b": "executed(in time)", "r": "executed(overtime)"}
         if schedule
         else {"b": "executed"},

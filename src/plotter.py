@@ -1,4 +1,4 @@
-from typing import Any, Tuple, Union
+from typing import Any, Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -19,6 +19,10 @@ class Plotter:
         plt.grid(color="gray", alpha=0.5)
         plt.rcParams["font.family"] = "IPAexGothic"
 
+    @staticmethod
+    def create_single_colormap(sizex: int, sizey: int, color: str):
+        return [[color] * sizey for _ in range(sizex)]
+
     def plot_barh(
         self,
         yticks: Any,
@@ -29,13 +33,9 @@ class Plotter:
     ) -> None:
 
         clr_set = {c for clr in clrs for c in clr}
-        dmyv = [0.0 for _ in range(len(yticks))]
-        if "g" in clr_set:
-            plt.barh(yticks, dmyv, left=dmyv, color="g", label=lbls["g"])
-        if "b" in clr_set:
-            plt.barh(yticks, dmyv, left=dmyv, color="b", label=lbls["b"])
-        if "r" in clr_set:
-            plt.barh(yticks, dmyv, left=dmyv, color="r", label=lbls["r"])
+        dmy_clr = [0.0 for _ in range(len(yticks))]
+        for c in clr_set:
+            plt.barh(yticks, dmy_clr, left=dmy_clr, color=c, label=lbls[c])
         for btm, ln, clr in zip(btms, lens, clrs):
             plt.barh(yticks, ln, left=btm, height=0.3, color=clr)
 

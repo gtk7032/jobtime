@@ -7,6 +7,7 @@ from typing import Any, Tuple
 
 import numpy as np
 
+from plotter import Plotter
 from util import Util
 
 
@@ -222,12 +223,8 @@ class Jobnet:
 
             for jx in range(max_jx):
                 for sx in range(max_sx):
-                    jbtm = jbtms[jx][y]
-                    sbtm = sbtms[sx][y]
-                    jlen = jlens[jx][y]
-                    slen = slens[sx][y]
-                    dist = math.fabs(jbtm - sbtm) + math.fabs(
-                        (jbtm + jlen) - (sbtm + slen)
+                    dist = math.fabs(jbtms[jx][y] - sbtms[sx][y]) + math.fabs(
+                        (jbtms[jx][y] + jlens[jx][y]) - (sbtms[sx][y] + slens[sx][y])
                     )
                     if dist < map_dist[jx][y]:
                         map_x[jx][y], map_dist[jx][y] = sx, dist
@@ -256,7 +253,7 @@ class Jobnet:
 
         max_jx = len(jbtms)
         max_y = len(jbtms[0])
-        clrs: list[list[str]] = [["b"] * max_y for _ in range(max_jx)]
+        clrs: list[list[str]] = Plotter.create_single_colormap(max_jx, max_y, "b")
 
         for x, col in enumerate(bar_map):
             for y, tgt in enumerate(col):
