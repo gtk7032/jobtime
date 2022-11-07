@@ -54,7 +54,7 @@ def main():
         plotter.plot_barh(yticks + 0.2, slens, sbtms, sclrs, {"g": "scheduled"})
 
     plotter.plot_barh(
-        yticks - 0.2,
+        yticks - 0.2 if schedule else yticks,
         jlens,
         jbtms,
         Jobnet.create_colormap(
