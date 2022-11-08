@@ -41,6 +41,7 @@ class Plotter:
 
     def save(self, output: str, show: bool = False) -> None:
         plt.legend()
+        plt.rc("svg", fonttype="none")
         plt.savefig(output, bbox_inches="tight")
         if show:
             plt.show()
