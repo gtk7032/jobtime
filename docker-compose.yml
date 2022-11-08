@@ -1,0 +1,13 @@
+version: '3'
+services:
+  python3:
+    image: jobtime
+    restart: always
+    build: .
+    container_name: 'jobtime'
+    working_dir: '/root'
+    tty: true
+    volumes:
+      - ./src:/root/src
+      - ./resources:/root/resources
+      - ./output:/root/output
