@@ -1,7 +1,13 @@
 FROM python:3.9-slim-buster
 USER root
 
-RUN apt-get update ; apt-get install -y fonts-ipaexfont
+RUN apt-get update  \
+    && apt-get install -y fonts-ipaexfont \
+    && apt-get install -y tzdata \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV TZ Asia/Tokyo
 
 RUN mkdir -p /root/src \
     && mkdir -p /root/resources \
