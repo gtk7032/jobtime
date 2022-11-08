@@ -18,6 +18,7 @@ class Plotter:
         plt.xticks(np.arange(xrange["min"], xrange["max"] + 1, 1))
         plt.grid(color="gray", alpha=0.5)
         plt.rcParams["font.family"] = "IPAexGothic"
+        plt.rc("svg", fonttype="none")
 
     @staticmethod
     def create_single_colormap(sizex: int, sizey: int, color: str):
@@ -41,7 +42,6 @@ class Plotter:
 
     def save(self, output: str, show: bool = False) -> None:
         plt.legend()
-        plt.rc("svg", fonttype="none")
         plt.savefig(output, bbox_inches="tight")
         if show:
             plt.show()
