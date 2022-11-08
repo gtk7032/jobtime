@@ -21,7 +21,7 @@ def parse_arguments() -> dict[str, Any]:
         "schedule": os.path.join("resources", args.schedule) if args.schedule else None,
         "output": os.path.join(
             "output",
-            args.output or pathlib.Path(args.joblog).with_suffix(".png"),
+            args.output or pathlib.Path(args.joblog).with_suffix(".svg"),
         ),
         "show": args.show.upper() == "TRUE",
         "figsize": tuple(int(fs) for fs in args.figsize.split(":"))
