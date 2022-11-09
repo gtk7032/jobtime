@@ -1,13 +1,19 @@
-version: '3'
+version: '3.4'
+
 services:
   python3:
     image: jobtime
     restart: always
-    build: .
-    container_name: 'jobtime'
-    working_dir: '/root'
+    build:
+      context: .
+      args:
+        - UID:1000
+        - GID:1000
+        - USERNAME:jobtime
+        - GROUPNAME:jobtime
+    container_name: jobtime
     tty: true
     volumes:
-      - ./src:/root/src
-      - ./resources:/root/resources
-      - ./output:/root/output
+      - ./src:/usr/local/jobtime/src
+      - ./resources:/usr/local/jobtime/resources
+      - ./output:/usr/local/jobtime/output
