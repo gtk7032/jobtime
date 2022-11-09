@@ -16,7 +16,9 @@ RUN groupadd -g "$GID" "$GROUPNAME" \
     tzdata \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir numpy matplotlib  \
+    && pip install --no-cache-dir \
+    numpy==1.23.4 \
+    matplotlib==3.6.1  \
     && sed -i 's/#font.family:  sans-serif/font.family:   IPAexGothic/g' "$mplrc"
 
 ENV TZ Asia/Tokyo
