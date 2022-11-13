@@ -2,10 +2,10 @@ FROM python:3.9-slim-buster
 
 ARG USERNAME=jobtime
 ARG GROUPNAME=jobtime
-ARG UID
-ARG GID
+ARG UID=1000
+ARG GID=1000
 ARG APP_DIR=/usr/local/jobtime
-ARG mplrc=/usr/local/lib/python3.9/site-packages/matplotlib/mpl-data/matplotlibrc
+ARG MPLRC=/usr/local/lib/python3.9/site-packages/matplotlib/mpl-data/matplotlibrc
 
 RUN groupadd -g "$GID" "$GROUPNAME" \
     && useradd -m -s /bin/bash -u "$UID" -g"$GID" "$USERNAME" \
@@ -19,7 +19,7 @@ RUN groupadd -g "$GID" "$GROUPNAME" \
     && pip install --no-cache-dir \
     numpy==1.23.4 \
     matplotlib==3.6.1  \
-    && sed -i 's/#font.family:  sans-serif/font.family:   IPAexGothic/g' "$mplrc"
+    && sed -i 's/#font.family:  sans-serif/font.family:   IPAexGothic/g' "$MPLRC"
 
 ENV TZ Asia/Tokyo
 USER "$USERNAME"
