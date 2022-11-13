@@ -6,11 +6,6 @@ services:
     restart: always
     build:
       context: .
-      args:
-        - UID:1000
-        - GID:1000
-        - USERNAME:jobtime
-        - GROUPNAME:jobtime
     container_name: jobtime
     tty: true
     volumes:
