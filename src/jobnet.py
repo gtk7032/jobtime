@@ -66,7 +66,7 @@ class Jobnet:
 
             for row in reader:
 
-                date = Util.cvrt_to_hour(
+                date = Util.datetime_to_hour(
                     dt.strptime(row["log date"], "%Y/%m/%d %H:%M:%S.%f")
                 )
                 jobid = row["jobnet id"]
@@ -93,7 +93,7 @@ class Jobnet:
                     jobnets[jobid][innerid].end = date
                     jobnets[jobid][innerid].status = status
 
-        now = Util.cvrt_to_hour(dt.now())
+        now = Util.datetime_to_hour(dt.now())
         for joblist in jobnets.values():
             for job in joblist.values():
                 if job.end is None:
@@ -120,8 +120,8 @@ class Jobnet:
                     else "0"
                 )
                 jobnm = row["jobnm"]
-                start = Util.cvrt_to_hour(dt.strptime(row["start"], "%H:%M:%S"))
-                end = Util.cvrt_to_hour(dt.strptime(row["end"], "%H:%M:%S"))
+                start = Util.datetime_to_hour(dt.strptime(row["start"], "%H:%M:%S"))
+                end = Util.datetime_to_hour(dt.strptime(row["end"], "%H:%M:%S"))
 
                 if jobid not in schedules.keys():
                     schedules[jobid] = {}
