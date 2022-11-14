@@ -304,10 +304,14 @@ class Jobnet:
         jobnets: dict[str, dict[str, Jobnet]], basecolor: str
     ) -> list[list[str]]:
 
-        return [
-            ["r" if jn.status == Status.FAILED else basecolor for jn in jobnet.values()]
-            for jobnet in jobnets.values()
-        ]
+        size_y = len(jobnets)
+        size_x = len(next(iter(jobnets)))
+        clrmap = Plotter.create_single_colormap(size_x, size_y, basecolor)
+        for y, jobnet in enumerate(jobnets.values()):
+            for x, jn in enumerate(jobnet.values()):
+                if jn.status == Status.FAILED:
+                    clrmap[x][y] = "r"
+        return clrmap
 
     @staticmethod
     def merge_colormap(fst: list[list[str]], snd: list[list[str]]) -> list[list[str]]:
