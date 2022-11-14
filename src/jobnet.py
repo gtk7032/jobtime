@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import math
 from datetime import datetime as dt
+from enum import Enum, Flag, auto
 from typing import Any, Tuple
 
 import numpy as np
@@ -11,10 +12,18 @@ from plotter import Plotter
 from util import Util
 
 
+class Status(Flag):
+    RUNNING = auto()
+    SUCCEED = auto()
+    FAILED = auto()
+    DEFAULT = auto()
+
+
 class Jobnet:
 
     START_MSG = ["ジョブネットが開始しました。", "Jobnet has started."]
-    END_MSG = ["ジョブネットが終了しました。", "Jobnet has ended."]
+    SUCCESSFUL_MSG = ["ジョブネットが終了しました。", "Jobnet has ended."]
+    ERROR_MSG = ["ジョブが異常終了しました。", "Job failed."]
 
     def __init__(
         self,
@@ -24,6 +33,7 @@ class Jobnet:
         start: float | None,
         end: float | None,
         isgenuine: bool,
+        status: Status,
     ):
         self.jobid = jobnetid
         self.inrid = innerid
@@ -31,6 +41,7 @@ class Jobnet:
         self.start = start
         self.end = end
         self.isgenuine = isgenuine
+        self.status = status
 
     def get_duration(self) -> float:
         return self.end - self.start
@@ -67,18 +78,28 @@ class Jobnet:
                     if jobid not in jobnets.keys():
                         jobnets[jobid] = {}
                     jobnets[jobid][innerid] = Jobnet(
-                        jobid, innerid, name, date, None, True
+                        jobid, innerid, name, date, None, True, Status.DEFAULT
                     )
+                    continue
 
-                elif msg in Jobnet.END_MSG:
-                    if jobid in jobnets.keys() and innerid in jobnets[jobid].keys():
-                        jobnets[jobid][innerid].end = date
+                if msg in Jobnet.SUCCESSFUL_MSG:
+                    status = Status.SUCCEED
+                elif msg in Jobnet.ERROR_MSG:
+                    status = Status.FAILED
+                else:
+                    continue
+
+                if jobid in jobnets.keys() and innerid in jobnets[jobid].keys():
+                    jobnets[jobid][innerid].end = date
+                    jobnets[jobid][innerid].status = status
 
         now = Util.cvrt_to_hour(dt.now())
         for joblist in jobnets.values():
             for job in joblist.values():
                 if job.end is None:
                     job.end = now
+                if job.status == Status.DEFAULT:
+                    job.status = Status.RUNNING
 
         return Jobnet.sort(jobnets)
 
@@ -105,7 +126,9 @@ class Jobnet:
                 if jobid not in schedules.keys():
                     schedules[jobid] = {}
 
-                schedules[jobid][inrid] = Jobnet(jobid, inrid, jobnm, start, end, True)
+                schedules[jobid][inrid] = Jobnet(
+                    jobid, inrid, jobnm, start, end, True, Status.DEFAULT
+                )
 
         return Jobnet.sort(schedules)
 
@@ -160,7 +183,13 @@ class Jobnet:
             if key not in res.keys():
                 res[key] = {
                     "0": Jobnet(
-                        key, "0", next(iter(ref[key].values())).name, None, None, False
+                        key,
+                        "0",
+                        next(iter(ref[key].values())).name,
+                        None,
+                        None,
+                        False,
+                        Status.DEFAULT,
                     )
                 }
 
@@ -197,13 +226,14 @@ class Jobnet:
 
     @staticmethod
     def extract_plotdata(
-        jobnets: dict[str, dict[str, Jobnet]],
-    ) -> Tuple[list[list[float]], list[list[float]], Any, list[str]]:
+        jobnets: dict[str, dict[str, Jobnet]], basecolor: str
+    ) -> Tuple[list[list[float]], list[list[float]], Any, list[str], list[list[str]]]:
         fmtd_jobnets = Jobnet.format(jobnets)
         btms, lens = Jobnet.create_barh(fmtd_jobnets)
         ylbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
         yticks = np.arange(len(jobnets.keys()))
-        return btms, lens, yticks, ylbls
+        clrmap = Jobnet.create_colormap_by_status(jobnets, basecolor)
+        return btms, lens, yticks, ylbls, clrmap
 
     @staticmethod
     def map_bars(
@@ -243,7 +273,7 @@ class Jobnet:
         return map_x
 
     @staticmethod
-    def create_colormap(
+    def create_colormap_by_schedule(
         jbtms: list[list[float]],
         jlens: list[list[float]],
         sbtms: list[list[float]],
@@ -268,6 +298,27 @@ class Jobnet:
                     clrs[x][y] = "r"
 
         return clrs
+
+    @staticmethod
+    def create_colormap_by_status(
+        jobnets: dict[str, dict[str, Jobnet]], basecolor: str
+    ) -> list[list[str]]:
+
+        size_y = len(jobnets)
+        size_x = len(next(iter(jobnets)))
+        clrmap = Plotter.create_single_colormap(size_x, size_y, basecolor)
+        for y, jobnet in enumerate(jobnets.values()):
+            for x, jn in enumerate(jobnet.values()):
+                if jn.status == Status.FAILED:
+                    clrmap[x][y] = "r"
+        return clrmap
+
+    @staticmethod
+    def merge_colormap(fst: list[list[str]], snd: list[list[str]]) -> list[list[str]]:
+        return [
+            [f if f == "r" else s for f, s in zip(fcol, scol)]
+            for fcol, scol in zip(fst, snd)
+        ]
 
     @staticmethod
     def show(jobnets: dict[str, dict[str, Jobnet]]):

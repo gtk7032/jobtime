@@ -41,7 +41,7 @@ def main():
         )
     )
 
-    jbtms, jlens, yticks, ylbls = Jobnet.extract_plotdata(joblogs)
+    jbtms, jlens, yticks, ylbls, jclrs = Jobnet.extract_plotdata(joblogs, "b")
 
     plotter = Plotter()
     plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
@@ -49,22 +49,24 @@ def main():
     if schedule:
         schedule = Jobnet.complement(schedule, joblogs)
         schedule = Jobnet.sortby_givenkeys(schedule, Jobnet.get_order(joblogs))
-        sbtms, slens, _, _ = Jobnet.extract_plotdata(schedule)
-        sclrs = Plotter.create_single_colormap(len(slens), len(slens[0]), "g")
+        sbtms, slens, _, _, sclrs = Jobnet.extract_plotdata(schedule, "g")
         plotter.plot_barh(yticks + 0.2, slens, sbtms, sclrs, {"g": "scheduled"})
 
     plotter.plot_barh(
         yticks - 0.2 if schedule else yticks,
         jlens,
         jbtms,
-        Jobnet.create_colormap(
-            jbtms, jlens, sbtms, slens, Jobnet.map_bars(jbtms, jlens, sbtms, slens)
+        Jobnet.merge_colormap(
+            jclrs,
+            Jobnet.create_colormap_by_schedule(
+                jbtms, jlens, sbtms, slens, Jobnet.map_bars(jbtms, jlens, sbtms, slens)
+            ),
         )
         if schedule
-        else Plotter.create_single_colormap(len(jlens), len(jlens[0]), "b"),
-        {"b": "executed(in time)", "r": "executed(overtime)"}
+        else jclrs,
+        {"b": "executed(in time)/executing", "r": "executed(overtime/error)"}
         if schedule
-        else {"b": "executed"},
+        else {"b": "executed/executing", "r": "executed(error)"},
     )
     plotter.save(args["output"], args["show"])
 
