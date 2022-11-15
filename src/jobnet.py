@@ -47,7 +47,7 @@ class Jobnet:
         return self.end - self.start
 
     @staticmethod
-    def extract_xrange(jobnets: dict[str, dict[str, Jobnet]]):
+    def extract_xrange(jobnets: dict[str, dict[str, Jobnet]]) -> dict[str, float]:
         mn, mx = 24.0, 0.0
         for jn in jobnets.values():
             for j in jn.values():

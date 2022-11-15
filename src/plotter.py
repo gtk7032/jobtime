@@ -21,7 +21,7 @@ class Plotter:
         plt.rc("svg", fonttype="none")
 
     @staticmethod
-    def create_single_colormap(sizex: int, sizey: int, color: str):
+    def create_single_colormap(sizex: int, sizey: int, color: str) -> list[list[str]]:
         return [[color] * sizey for _ in range(sizex)]
 
     def plot_barh(
