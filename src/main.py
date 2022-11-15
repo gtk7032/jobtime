@@ -58,7 +58,7 @@ def main():
         jbtms,
         Jobnet.merge_colormap(
             jclrs,
-            Jobnet.create_colormap_by_schedule(
+            Jobnet.create_colormap_with_schedule(
                 jbtms, jlens, sbtms, slens, Jobnet.map_bars(jbtms, jlens, sbtms, slens)
             ),
         )

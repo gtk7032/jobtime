@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import math
 from datetime import datetime as dt
-from enum import Enum, Flag, auto
+from enum import Flag, auto
 from typing import Any, Tuple
 
 import numpy as np
@@ -232,7 +232,7 @@ class Jobnet:
         btms, lens = Jobnet.create_barh(fmtd_jobnets)
         ylbls = [joblist[next(iter(joblist))].name for joblist in jobnets.values()]
         yticks = np.arange(len(jobnets.keys()))
-        clrmap = Jobnet.create_colormap_by_status(jobnets, basecolor)
+        clrmap = Jobnet.create_colormap_with_status(jobnets, basecolor)
         return btms, lens, yticks, ylbls, clrmap
 
     @staticmethod
@@ -273,7 +273,7 @@ class Jobnet:
         return map_x
 
     @staticmethod
-    def create_colormap_by_schedule(
+    def create_colormap_with_schedule(
         jbtms: list[list[float]],
         jlens: list[list[float]],
         sbtms: list[list[float]],
@@ -300,7 +300,7 @@ class Jobnet:
         return clrs
 
     @staticmethod
-    def create_colormap_by_status(
+    def create_colormap_with_status(
         jobnets: dict[str, dict[str, Jobnet]], basecolor: str
     ) -> list[list[str]]:
 

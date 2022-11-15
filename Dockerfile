@@ -6,6 +6,7 @@ ARG UID=1000
 ARG GID=1000
 ARG APP_DIR=/usr/local/jobtime
 ARG MPLRC=/usr/local/lib/python3.9/site-packages/matplotlib/mpl-data/matplotlibrc
+ARG TIMEZONE=Asia/Tokyo
 
 RUN groupadd -g "$GID" "$GROUPNAME" \
     && useradd -m -s /bin/bash -u "$UID" -g"$GID" "$USERNAME" \
@@ -21,7 +22,7 @@ RUN groupadd -g "$GID" "$GROUPNAME" \
     matplotlib==3.6.1  \
     && sed -i 's/#font.family:  sans-serif/font.family:   IPAexGothic/g' "$MPLRC"
 
-ENV TZ Asia/Tokyo
+ENV TZ "$TIMEZONE"
 USER "$USERNAME"
 WORKDIR "$APP_DIR"
 
