@@ -305,7 +305,7 @@ class Jobnet:
     ) -> list[list[str]]:
 
         size_y = len(jobnets)
-        size_x = len(next(iter(jobnets)))
+        size_x = len(jobnets[next(iter(jobnets))])
         clrmap = Plotter.create_single_colormap(size_x, size_y, basecolor)
         for y, jobnet in enumerate(jobnets.values()):
             for x, jn in enumerate(jobnet.values()):
