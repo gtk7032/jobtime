@@ -142,15 +142,13 @@ class Jobnet:
 
         for jobid, joblist in jobnets.items():
             fmtd[jobid] = [
-                {"btm": 0.0, "len": 0.0} for _ in range(max_size - len(joblist))
+                {"btm": job.start, "len": max(job.get_duration(), 5 / 60)}
+                if job.isgenuine
+                else {"btm": 0.0, "len": 0.0}
+                for job in joblist.values()
             ]
             fmtd[jobid].extend(
-                [
-                    {"btm": job.start, "len": max(job.get_duration(), 5 / 60)}
-                    if job.isgenuine
-                    else {"btm": 0.0, "len": 0.0}
-                    for job in joblist.values()
-                ]
+                [{"btm": 0.0, "len": 0.0} for _ in range(max_size - len(joblist))]
             )
         return fmtd
 
