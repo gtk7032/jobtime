@@ -40,7 +40,6 @@ def main():
             Jobnet.extract_xrange(schedule),
         )
     )
-
     jbtms, jlens, yticks, ylbls, jclrs = Jobnet.extract_plotdata(joblogs, "b")
 
     plotter = Plotter()
@@ -68,7 +67,7 @@ def main():
         if schedule
         else {"b": "executed/executing", "r": "executed(error)"},
     )
-    plotter.save(args["output"], args["show"])
+    # plotter.save(args["output"], args["show"])
 
 
 if __name__ == "__main__":

@@ -33,6 +33,7 @@ class Plotter:
         lbls: dict[str, str],
     ) -> None:
 
+        print("clrs=", clrs)
         clr_set = {c for clr in clrs for c in clr}
         dmy_clr = [0.0 for _ in range(len(yticks))]
         for c in clr_set:
