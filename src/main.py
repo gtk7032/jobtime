@@ -67,7 +67,7 @@ def main():
         if schedule
         else {"b": "executed/executing", "r": "executed(error)"},
     )
-    # plotter.save(args["output"], args["show"])
+    plotter.save(args["output"], args["show"])
 
 
 if __name__ == "__main__":
