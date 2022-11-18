@@ -246,27 +246,43 @@ class Jobnet:
         max_y = len(jbtms[0])
         map_x: list[list[int]] = [[-1] * max_y for _ in range(max_jx)]
         map_dist: list[list[float]] = [[24.0] * max_y for _ in range(max_jx)]
+        secured: list[list[bool]] = [[False] * max_y for _ in range(max_sx)]
+
+        def dist(jx: int, sx: int, y: int) -> float:
+            return math.fabs(jbtms[jx][y] - sbtms[sx][y]) + math.fabs(
+                (jbtms[jx][y] + jlens[jx][y]) - (sbtms[sx][y] + slens[sx][y])
+            )
+
+        def keep_mapping(y: int) -> bool:
+            return bool(
+                len([secured[sx][y] for sx in range(max_sx) if not secured[sx][y]])
+                and len([map_x[jx][y] for jx in range(max_jx) if map_x == -1])
+            )
 
         for y in range(max_y):
 
-            for jx in range(max_jx):
-                for sx in range(max_sx):
-                    dist = math.fabs(jbtms[jx][y] - sbtms[sx][y]) + math.fabs(
-                        (jbtms[jx][y] + jlens[jx][y]) - (sbtms[sx][y] + slens[sx][y])
-                    )
-                    if dist < map_dist[jx][y]:
-                        map_x[jx][y], map_dist[jx][y] = sx, dist
+            while keep_mapping(y):
 
-            for jx in range(max_jx - 1):
-                if map_x[jx][y] == -1:
-                    continue
-                for kx in range(jx + 1, max_jx, 1):
-                    if map_x[jx][y] != map_x[kx][y]:
+                for jx in range(max_jx):
+                    if map_x[jx][y] != -1:
                         continue
-                    if map_dist[jx][y] > map_dist[kx][y]:
-                        map_x[jx][y] = -1
-                    else:
-                        map_x[kx][y] = -1
+                    for sx in range(max_sx):
+                        if secured[sx][y]:
+                            continue
+                        d = dist(jx, sx, y)
+                        if d < map_dist[jx][y]:
+                            map_x[jx][y], map_dist[jx][y] = sx, d
+
+                for jx in range(max_jx - 1):
+                    if map_x[jx][y] == -1:
+                        continue
+                    for kx in range(jx + 1, max_jx, 1):
+                        if map_x[jx][y] != map_x[kx][y]:
+                            continue
+                        if map_dist[jx][y] > map_dist[kx][y]:
+                            map_x[jx][y] = -1
+                        else:
+                            map_x[kx][y] = -1
 
         return map_x
 
