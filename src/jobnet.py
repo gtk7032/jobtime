@@ -273,16 +273,18 @@ class Jobnet:
                         if d < map_dist[jx][y]:
                             map_x[jx][y], map_dist[jx][y] = sx, d
 
-                for jx in range(max_jx - 1):
+                for jx in range(max_jx):
                     if map_x[jx][y] == -1:
                         continue
-                    for kx in range(jx + 1, max_jx, 1):
-                        if map_x[jx][y] != map_x[kx][y]:
+                    for kx in range(min(jx + 1, max_jx - 1), max_jx, 1):
+                        if kx == jx or map_x[jx][y] != map_x[kx][y]:
                             continue
                         if map_dist[jx][y] > map_dist[kx][y]:
                             map_x[jx][y] = -1
                         else:
                             map_x[kx][y] = -1
+                    if map_x[jx][y] != -1:
+                        secured[map_x[jx][y]][y] = True
 
         return map_x
 
