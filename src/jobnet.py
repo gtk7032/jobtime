@@ -244,9 +244,12 @@ class Jobnet:
         max_jx = len(jbtms)
         max_sx = len(sbtms)
         max_y = len(jbtms[0])
-        map_x: list[list[int]] = [[-1] * max_y for _ in range(max_jx)]
-        map_dist: list[list[float]] = [[24.0] * max_y for _ in range(max_jx)]
-        secured: list[list[bool]] = [[False] * max_y for _ in range(max_sx)]
+        map_x = [[-1] * max_y for _ in range(max_jx)]
+        map_dist = [[24.0] * max_y for _ in range(max_jx)]
+        secured = [
+            [False if jbtms[x][y] and jlens[x][y] else True for y in range(max_y)]
+            for x in range(max_sx)
+        ]
 
         def dist(jx: int, sx: int, y: int) -> float:
             return math.fabs(jbtms[jx][y] - sbtms[sx][y]) + math.fabs(
