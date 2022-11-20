@@ -258,8 +258,8 @@ class Jobnet:
 
         def keep_mapping(y: int) -> bool:
             return bool(
-                len([secured[sx][y] for sx in range(max_sx) if not secured[sx][y]])
-                and len([map_x[jx][y] for jx in range(max_jx) if map_x == -1])
+                sum(not secured[sx][y] for sx in range(max_sx))
+                and sum(map_x[jx][y] == -1 for jx in range(max_jx))
             )
 
         for y in range(max_y):
