@@ -51,7 +51,12 @@ def main():
     plotter = Plotter()
     plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
 
-    if not schedules.is_empty():
+    if schedules.is_empty():
+        plotter.plot_barh(
+            yticks, jbars, {"b": "executed/executing", "r": "executed(error)"}
+        )
+
+    else:
         schedules.complement_with(joblogs)
         schedules.sort_by_keys(joblogs.get_order())
         sbars, _, _ = schedules.extract_plotdata()
@@ -60,10 +65,6 @@ def main():
             yticks - 0.2,
             Bar.colorize_with_schedule(jbars, sbars),
             {"b": "executed(in time)/executing", "r": "executed(overtime/error)"},
-        )
-    else:
-        plotter.plot_barh(
-            yticks, jbars, {"b": "executed/executing", "r": "executed(error)"}
         )
 
     plotter.save(args["output"], args["show"])
