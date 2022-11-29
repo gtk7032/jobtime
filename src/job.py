@@ -59,8 +59,6 @@ class Job:
                 self.start,
                 max(self.duration(), 5 / 60),
                 Status.color(self.status),
-                True,
-                self.status,
             )
             if self.is_genuine
             else Bar.dummy()
