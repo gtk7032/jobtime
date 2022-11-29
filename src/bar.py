@@ -1,21 +1,15 @@
 from __future__ import annotations
 
-from job import Status
-
 
 class Bar:
-    def __init__(
-        self, bottom: float, length: float, color: str, is_genuine: bool, status: Status
-    ) -> None:
+    def __init__(self, bottom: float, length: float, color: str) -> None:
         self.bottom = bottom
         self.length = length
         self.color = color
-        self.is_genuine = is_genuine
-        self.status = status
 
     @staticmethod
     def dummy() -> Bar:
-        return Bar(0.0, 0.0, "", False, Status.DEFAULT)
+        return Bar(0.0, 0.0, "")
 
     @staticmethod
     def padding(bars: dict[str, list[Bar]]) -> dict[str, list[Bar]]:
