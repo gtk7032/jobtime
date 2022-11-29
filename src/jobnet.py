@@ -24,11 +24,11 @@ class Jobnet:
     def has(self, key: str) -> bool:
         return key in self.jobs.keys()
 
-    def at(self, no: int) -> Optional[Job]:
+    def find_key_by_num(self, no: int) -> str:
         for i, job in enumerate(self.jobs.values()):
             if i == no:
-                return job
-        return None
+                return job.inrid
+        return ""
 
     def sort_jobs(self) -> None:
         self.jobs = {
