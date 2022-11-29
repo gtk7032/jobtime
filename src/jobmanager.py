@@ -197,6 +197,7 @@ class JobnetManager:
         return pair_x
 
     def set_status_by_schedule(self, schedules: JobnetManager) -> None:
+
         pair_x = self.mapping(schedules)
 
         for jobnet in self.jobnets.values():
@@ -205,10 +206,13 @@ class JobnetManager:
                     continue
                 if job.status != Status.SUCCEED:
                     continue
-                sch = schedules.jobnets[jobnet.id].at(pair_x[jobnet.id][x])
-                if not sch:
-                    continue
-                if job.is_within(sch):
+                if job.is_within(
+                    schedules.jobnets[jobnet.id].jobs[
+                        schedules.jobnets[jobnet.id].find_key_by_num(
+                            pair_x[jobnet.id][x]
+                        )
+                    ]
+                ):
                     job.status = Status.INTIME
                 else:
                     job.status = Status.OVERTIME
