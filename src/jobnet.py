@@ -46,13 +46,6 @@ class Jobnet:
         return len(self.jobs)
 
     @staticmethod
-    def merge_colormap(fst: list[list[str]], snd: list[list[str]]) -> list[list[str]]:
-        return [
-            [f if f == "r" else s for f, s in zip(fcol, scol)]
-            for fcol, scol in zip(fst, snd)
-        ]
-
-    @staticmethod
     def show(jobnets: dict[str, dict[str, Jobnet]]):
         for joblist in jobnets.values():
             for job in joblist.values():
