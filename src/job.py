@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import math
 from enum import Flag, auto
 
 from bar import Bar
@@ -7,22 +10,22 @@ class Status(Flag):
     RUNNING = auto()
     SUCCEED = auto()
     FAILED = auto()
-    IN_TIME = auto()
+    INTIME = auto()
     OVERTIME = auto()
     DEFAULT = auto()
 
-    __BLUE = [RUNNING, SUCCEED, IN_TIME]
-    __RED = [FAILED, OVERTIME]
-    __GREEN = [DEFAULT]
+    __BLUE = RUNNING | SUCCEED | INTIME
+    __RED = FAILED | OVERTIME
+    __GREEN = DEFAULT
 
     @classmethod
     def color(cls, status) -> str:
-        if status in cls.__BLUE:
+        if status & cls.__BLUE:
             return "b"
-        elif status in cls.__RED:
+        elif status & cls.__RED:
             return "r"
         else:
-            return "b"
+            return "g"
 
 
 class Job:
@@ -47,6 +50,9 @@ class Job:
     def duration(self) -> float:
         return self.end - self.start
 
+    def dist_to(self, job: Job) -> float:
+        return math.fabs(job.start - self.start) + math.fabs(job.end - self.end)
+
     def to_bar(self) -> Bar:
         return (
             Bar(
@@ -59,3 +65,6 @@ class Job:
             if self.is_genuine
             else Bar.dummy()
         )
+
+    def is_within(self, job: Job) -> bool:
+        return self.start >= job.start and self.end <= job.end

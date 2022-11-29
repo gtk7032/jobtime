@@ -3,7 +3,6 @@ import os
 import pathlib
 from typing import Any
 
-from bar import Bar
 from jobmanager import JobnetManager
 from plotter import Plotter
 from util import Util
@@ -46,24 +45,26 @@ def main():
         )
     )
 
-    jbars, yticks, ylbls = joblogs.extract_plotdata()
+    yticks, ylbls = joblogs.extract_yticks(), joblogs.extract_ylabels()
 
     plotter = Plotter()
     plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
 
     if schedules.is_empty():
         plotter.plot_barh(
-            yticks, jbars, {"b": "executed/executing", "r": "executed(error)"}
+            yticks,
+            joblogs.extract_bars(),
+            {"b": "executed/executing", "r": "executed(error)"},
         )
 
     else:
+        joblogs.set_status_by_schedule(schedules)
         schedules.complement_with(joblogs)
         schedules.sort_by_keys(joblogs.get_order())
-        sbars, _, _ = schedules.extract_plotdata()
-        plotter.plot_barh(yticks + 0.2, sbars, {"g": "scheduled"})
+        plotter.plot_barh(yticks + 0.2, schedules.extract_bars(), {"g": "scheduled"})
         plotter.plot_barh(
             yticks - 0.2,
-            Bar.colorize_with_schedule(jbars, sbars),
+            joblogs.extract_bars(),
             {"b": "executed(in time)/executing", "r": "executed(overtime/error)"},
         )
 
