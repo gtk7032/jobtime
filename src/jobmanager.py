@@ -125,7 +125,7 @@ class JobnetManager:
 
     def complement_with(self, ref: JobnetManager) -> None:
 
-        if not self.jobnets or not ref.jobnets:
+        if self.is_empty() or ref.is_empty():
             return
 
         # delete if not exists in ref
@@ -143,8 +143,72 @@ class JobnetManager:
         if self.jobnets and keys:
             self.jobnets = {key: self.jobnets[key] for key in keys}
 
-    def extract_plotdata(self) -> tuple[list[list[Bar]], Any, list[str]]:
-        bars = Bar.transpose(Bar.padding(self.to_bars()))
-        ylbls = [jobnet.name for jobnet in self.jobnets.values()]
-        yticks = np.arange(len(self.jobnets))
-        return bars, yticks, ylbls
+    def extract_bars(self) -> list[list[Bar]]:
+        return Bar.transpose(Bar.padding(self.to_bars()))
+
+    def extract_ylabels(self) -> list[str]:
+        return [jobnet.name for jobnet in self.jobnets.values()]
+
+    def extract_yticks(self) -> Any:
+        return np.arange(len(self.jobnets))
+
+    def mapping(self, schedule: JobnetManager) -> dict[str, list[int]]:
+
+        pair_x = {jn.id: [-1] * jn.size() for jn in self.jobnets.values()}
+        pair_dist = {jn.id: [24.0] * jn.size() for jn in self.jobnets.values()}
+        secured = {jn.id: [False] * jn.size() for jn in schedule.jobnets.values()}
+
+        def keep_mapping(jobnetid: str) -> bool:
+            return bool(
+                sum(not col for col in secured[jobnetid])
+                and sum(
+                    pair_x[jobnetid][jx] == -1
+                    for jx in range(self.jobnets[jobnetid].size())
+                )
+            )
+
+        for jobnet in self.jobnets.values():
+
+            while keep_mapping(jobnet.id):
+
+                for jx, job in enumerate(jobnet.jobs.values()):
+                    if pair_x[jobnet.id][jx] != -1:
+                        continue
+                    for sx, sch in enumerate(schedule.jobnets[jobnet.id].jobs.values()):
+                        if secured[jobnet.id][sx]:
+                            continue
+                        d = job.dist_to(sch)
+                        if d < pair_dist[jobnet.id][jx]:
+                            pair_x[jobnet.id][jx], pair_dist[jobnet.id][jx] = sx, d
+
+                for jx, job in enumerate(jobnet.jobs.values()):
+                    if pair_x[jobnet.id][jx] == -1:
+                        continue
+                    for kx in range(min(jx + 1, jobnet.size() - 1), jobnet.size(), 1):
+                        if jx == kx or pair_x[jobnet.id][jx] != pair_x[jobnet.id][kx]:
+                            continue
+                        if pair_dist[jobnet.id][jx] > pair_dist[jobnet.id][kx]:
+                            pair_x[jobnet.id][jx] = -1
+                        else:
+                            pair_x[jobnet.id][kx] = -1
+                    if pair_x[jobnet.id][jx] != -1:
+                        secured[jobnet.id][pair_x[jobnet.id][jx]] = True
+
+        return pair_x
+
+    def set_status_by_schedule(self, schedules: JobnetManager) -> None:
+        pair_x = self.mapping(schedules)
+
+        for jobnet in self.jobnets.values():
+            for x, job in enumerate(jobnet.jobs.values()):
+                if pair_x[jobnet.id][x] == -1:
+                    continue
+                if job.status != Status.SUCCEED:
+                    continue
+                sch = schedules.jobnets[jobnet.id].at(pair_x[jobnet.id][x])
+                if not sch:
+                    continue
+                if job.is_within(sch):
+                    job.status = Status.INTIME
+                else:
+                    job.status = Status.OVERTIME

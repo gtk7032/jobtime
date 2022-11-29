@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 from job import Job
 
@@ -23,6 +23,12 @@ class Jobnet:
 
     def has(self, key: str) -> bool:
         return key in self.jobs.keys()
+
+    def at(self, no: int) -> Optional[Job]:
+        for i, job in enumerate(self.jobs.values()):
+            if i == no:
+                return job
+        return None
 
     def sort_jobs(self) -> None:
         self.jobs = {
