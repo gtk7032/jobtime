@@ -24,9 +24,9 @@ class Jobnet:
     def has(self, key: str) -> bool:
         return key in self.jobs.keys()
 
-    def index_to_key(self, no: int) -> str:
+    def index_to_key(self, index: int) -> str:
         for i, job in enumerate(self.jobs.values()):
-            if i == no:
+            if i == index:
                 return job.inrid
         return ""
 
