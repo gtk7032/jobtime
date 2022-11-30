@@ -30,6 +30,10 @@ def parse_arguments() -> dict[str, Any]:
     }
 
 
+def add(tgt: list[int], v: float) -> list[float]:
+    return [t + v for t in tgt]
+
+
 def main():
     args = parse_arguments()
     joblogs = JobnetManager.read_joblog(args["joblog"])
@@ -58,12 +62,14 @@ def main():
         )
 
     else:
-        joblogs.set_status_by_schedule(schedules)
         schedules.complement_with(joblogs)
         schedules.sort_by_keys(joblogs.get_order())
-        plotter.plot_barh(yticks + 0.2, schedules.extract_bars(), {"g": "scheduled"})
+        joblogs.set_status_by_schedule(schedules)
         plotter.plot_barh(
-            yticks - 0.2,
+            add(yticks, 0.2), schedules.extract_bars(), {"g": "scheduled"}
+        )
+        plotter.plot_barh(
+            add(yticks, -0.2),
             joblogs.extract_bars(),
             {"b": "executed(in time)/executing", "r": "executed(overtime/error)"},
         )

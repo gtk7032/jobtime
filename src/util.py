@@ -19,5 +19,5 @@ class Util:
         return mn, mx
 
     @staticmethod
-    def integerize_xrange(xrange: tuple[float, float]) -> tuple[float, float]:
+    def integerize_xrange(xrange: tuple[float, float]) -> tuple[int, int]:
         return math.floor(xrange[0]), math.ceil(xrange[1])
