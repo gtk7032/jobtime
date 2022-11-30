@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from csv import DictReader
 from datetime import datetime as dt
-from typing import Any
-
-import numpy as np
 
 from bar import Bar
 from job import Job, Status
@@ -149,8 +146,8 @@ class JobnetManager:
     def extract_ylabels(self) -> list[str]:
         return [jobnet.name for jobnet in self.jobnets.values()]
 
-    def extract_yticks(self) -> Any:
-        return np.arange(len(self.jobnets))
+    def extract_yticks(self) -> list[int]:
+        return list(range(len(self.jobnets)))
 
     def mapping(self, schedule: JobnetManager) -> dict[str, list[int]]:
 
@@ -208,9 +205,7 @@ class JobnetManager:
                     continue
                 if job.is_within(
                     schedules.jobnets[jobnet.id].jobs[
-                        schedules.jobnets[jobnet.id].find_key_by_num(
-                            pair_x[jobnet.id][x]
-                        )
+                        schedules.jobnets[jobnet.id].index_to_key(pair_x[jobnet.id][x])
                     ]
                 ):
                     job.status = Status.INTIME
