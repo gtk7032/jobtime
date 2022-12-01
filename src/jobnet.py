@@ -24,6 +24,9 @@ class Jobnet:
     def has(self, key: str) -> bool:
         return key in self.jobs.keys()
 
+    def is_empty(self) -> bool:
+        return not bool(self.jobs)
+
     def index_to_key(self, index: int) -> str:
         for i, job in enumerate(self.jobs.values()):
             if i == index:
@@ -45,8 +48,6 @@ class Jobnet:
     def size(self) -> int:
         return len(self.jobs)
 
-    @staticmethod
-    def show(jobnets: dict[str, dict[str, Jobnet]]):
-        for joblist in jobnets.values():
-            for job in joblist.values():
-                print(vars(job))
+    def show(self):
+        for jn in self.jobs.values():
+            print(vars(jn))

@@ -38,11 +38,12 @@ class Plotter:
                 [bar.length for bar in col],
                 left=[bar.bottom for bar in col],
                 height=0.3,
-                color=[bar.color for bar in col if bar.color],
+                # if bar is dummy, set any color
+                color=[bar.color if bar.color else "g" for bar in col],
             )
 
     def save(self, output: str, show: bool = False) -> None:
-        plt.legend()
+        plt.legend(loc="upper left")
         plt.savefig(output, bbox_inches="tight")
         if show:
             plt.show()
