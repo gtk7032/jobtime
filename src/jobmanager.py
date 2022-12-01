@@ -22,9 +22,9 @@ class JobnetManager:
     def is_empty(self) -> bool:
         return not bool(self.jobnets)
 
-    def sort_jobnets(self) -> None:
+    def sort(self) -> None:
         for jobnet in self.jobnets.values():
-            jobnet.sort_jobs()
+            jobnet.sort()
         self.jobnets = {
             jobnetid: jobnet
             for jobnetid, jobnet in sorted(
@@ -85,7 +85,7 @@ class JobnetManager:
                 if job.status == Status.DEFAULT:
                     job.status = Status.RUNNING
 
-        manager.sort_jobnets()
+        manager.sort()
         return manager
 
     @staticmethod
@@ -111,7 +111,7 @@ class JobnetManager:
 
                 manager.jobnets[jobid].add(Job(inrid, True, start, end))
 
-        manager.sort_jobnets()
+        manager.sort()
         return manager
 
     def to_bars(self) -> dict[str, list[Bar]]:
