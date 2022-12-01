@@ -38,7 +38,7 @@ class Plotter:
                 [bar.length for bar in col],
                 left=[bar.bottom for bar in col],
                 height=0.3,
-                # if bar is dummy, set any color
+                # if bar is dummy, set some color
                 color=[bar.color if bar.color else "g" for bar in col],
             )
 
