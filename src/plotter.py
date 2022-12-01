@@ -23,7 +23,7 @@ class Plotter:
 
     def plot_barh(
         self,
-        yticks: Any,
+        yticks: list[int],
         bars: list[list[Bar]],
         lbls: dict[str, str],
     ) -> None:

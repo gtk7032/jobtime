@@ -33,7 +33,7 @@ class Jobnet:
                 return job.inrid
         return ""
 
-    def sort_jobs(self) -> None:
+    def sort(self) -> None:
         self.jobs = {
             id: job
             for id, job in sorted(
