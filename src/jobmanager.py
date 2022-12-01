@@ -153,7 +153,14 @@ class JobnetManager:
 
         pair_x = {jn.id: [-1] * jn.size() for jn in self.jobnets.values()}
         pair_dist = {jn.id: [24.0] * jn.size() for jn in self.jobnets.values()}
-        secured = {jn.id: [False] * jn.size() for jn in schedule.jobnets.values()}
+        secured = {
+            jn.id: [not job.is_genuine for job in jn.jobs.values()]
+            for jn in schedule.jobnets.values()
+        }
+
+        def clear(jobnetid: str, x: int) -> None:
+            pair_x[jobnetid][x] = -1
+            pair_dist[jobnetid][x] = 24.0
 
         def keep_mapping(jobnetid: str) -> bool:
             return bool(
@@ -165,6 +172,9 @@ class JobnetManager:
             )
 
         for jobnet in self.jobnets.values():
+
+            if schedule.jobnets[jobnet.id].is_empty():
+                continue
 
             while keep_mapping(jobnet.id):
 
@@ -185,9 +195,9 @@ class JobnetManager:
                         if jx == kx or pair_x[jobnet.id][jx] != pair_x[jobnet.id][kx]:
                             continue
                         if pair_dist[jobnet.id][jx] > pair_dist[jobnet.id][kx]:
-                            pair_x[jobnet.id][jx] = -1
+                            clear(jobnet.id, jx)
                         else:
-                            pair_x[jobnet.id][kx] = -1
+                            clear(jobnet.id, kx)
                     if pair_x[jobnet.id][jx] != -1:
                         secured[jobnet.id][pair_x[jobnet.id][jx]] = True
 
