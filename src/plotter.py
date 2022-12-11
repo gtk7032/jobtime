@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Tuple
 
 from matplotlib import pyplot as plt
 
@@ -23,7 +23,7 @@ class Plotter:
 
     def plot_barh(
         self,
-        yticks: list[int],
+        yticks: list[float],
         bars: list[list[Bar]],
         lbls: dict[str, str],
     ) -> None:
@@ -38,7 +38,7 @@ class Plotter:
                 [bar.length for bar in col],
                 left=[bar.bottom for bar in col],
                 height=0.3,
-                # if bar is dummy, set some color
+                # if bar is dummy, set any color
                 color=[bar.color if bar.color else "g" for bar in col],
             )
 

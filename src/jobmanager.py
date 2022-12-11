@@ -32,10 +32,10 @@ class JobnetManager:
             )
         }
 
-    def xrange(self) -> tuple[float, float]:
+    def range(self) -> tuple[float, float]:
         _min, _max = 24.0, 0.0
         for jn in self.jobnets.values():
-            mn, mx = jn.xrange()
+            mn, mx = jn.range()
             _min = min(_min, mn)
             _max = max(_max, mx)
         return _min, _max
@@ -115,10 +115,7 @@ class JobnetManager:
         return manager
 
     def to_bars(self) -> dict[str, list[Bar]]:
-        return {
-            jobnetid: [job.to_bar() for job in jobnet.jobs.values()]
-            for jobnetid, jobnet in self.jobnets.items()
-        }
+        return {jobnetid: jobnet.to_bars() for jobnetid, jobnet in self.jobnets.items()}
 
     def complement_with(self, ref: JobnetManager) -> None:
 
@@ -143,10 +140,10 @@ class JobnetManager:
     def extract_bars(self) -> list[list[Bar]]:
         return Bar.transpose(Bar.padding(self.to_bars()))
 
-    def extract_ylabels(self) -> list[str]:
+    def extract_labels(self) -> list[str]:
         return [jobnet.name for jobnet in self.jobnets.values()]
 
-    def extract_yticks(self) -> list[int]:
+    def extract_ticks(self) -> list[int]:
         return list(range(len(self.jobnets)))
 
     def mapping(self, schedule: JobnetManager) -> dict[str, list[int]]:
