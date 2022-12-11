@@ -52,6 +52,11 @@ docker exec -it jobtime python src/main.py --joblog=joblog.csv
 docker exec -it jobtime python src/main.py --joblog=joblog.csv --schedule=schedule.csv
 
 # example 3.
+docker exec -it jobtime python src/main.py --joblog=joblog.csv --figsize=4:3
+# figsize=x:y --> (width,height)=(100x[px],100y[px]) 
+# default --> figsize=16:9
+
+# example 4.
 docker exec -it jobtime python src/main.py --joblog=joblog.csv --schedule=schedule.csv --output=result.png
 # --> output/result.png
 
