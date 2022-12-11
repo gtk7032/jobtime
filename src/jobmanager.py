@@ -98,11 +98,11 @@ class JobnetManager:
             reader = DictReader(f)
 
             for row in reader:
-                jobid = row["jobid"]
+                jobid = row["jobnetid"]
                 inrid = (
                     str(len(manager.jobnets[jobid].jobs)) if manager.has(jobid) else "0"
                 )
-                jobnm = row["jobnm"]
+                jobnm = ""
                 start = Util.datetime_to_hour(dt.strptime(row["start"], "%H:%M:%S"))
                 end = Util.datetime_to_hour(dt.strptime(row["end"], "%H:%M:%S"))
 
