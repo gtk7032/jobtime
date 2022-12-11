@@ -7,9 +7,8 @@ jobtime is a tool to visualize job execution time for [Job Arranger](https://www
 ![](output/joblog.svg)
 
 ## Features
-
 - job execution times can be viewed at a glance
-- colored by job status (success, failure, on time, over time)
+- colored by job status (success, failure, in time, overtime)
 
 ## Requirements
 - Docker Engine
@@ -18,13 +17,13 @@ jobtime is a tool to visualize job execution time for [Job Arranger](https://www
     - how to get: 
         - [JobArranger Manager GUI](https://www.jobarranger.info/document/doku.php?id=4.0:operation:management:08file)
         - [jobarg_joblogput command](https://www.jobarranger.info/jaz/operation-manual_2.0/10external-joblogput.html)
-
-    - required
+    - required: yes
     - encoding: UTF-8
     - newline code: LF
     
-- job Schedule file (if you need)
+- job Schedule file
     - see [sample](resources/schedule.csv)
+    - required: no
     - encoding: UTF-8
     - newline code: LF
 
@@ -54,14 +53,13 @@ docker exec -it jobtime python src/main.py --joblog=joblog.csv
 --schedule=schedule.csv
 
 # example 3.
-docker exec -it jobtime python src/main.py --joblog=joblog.csv 
---schedule=schedule.csv
- --output=result.png
+docker exec -it jobtime python src/main.py --joblog=joblog.csv --schedule=schedule.csv --output=result.png
 
- ls output
+ls output
+    joblog.svg, result.png
+
 ```
 ## License
-
 [MIT](https://choosealicense.com/licenses/mit/)
 
 ## Author
