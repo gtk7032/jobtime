@@ -208,7 +208,7 @@ class JobnetManager:
             for x, job in enumerate(jobnet.jobs.values()):
                 if pair_x[jobnet.id][x] == -1:
                     continue
-                if job.status != Status.SUCCEED:
+                if job.status not in (Status.SUCCEED, Status.RUNNING):
                     continue
                 if job.is_within(
                     schedules.jobnets[jobnet.id].jobs[

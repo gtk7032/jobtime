@@ -62,7 +62,7 @@ def main():
         plotter.plot_barh(
             itof(yticks),
             joblogs.extract_bars(),
-            {"b": "executed/executing", "r": "executed(error)"},
+            {"b": "executed", "r": "executed(error)"},
         )
 
     else:
@@ -73,7 +73,7 @@ def main():
         plotter.plot_barh(
             add(yticks, -0.2),
             joblogs.extract_bars(),
-            {"b": "executed(in time)/executing", "r": "executed(overtime/error)"},
+            {"b": "executed(in time)", "r": "executed(overtime/error)"},
         )
 
     plotter.save(args["output"], args["show"])
