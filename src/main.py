@@ -30,6 +30,10 @@ def parse_arguments() -> dict[str, Any]:
     }
 
 
+def itof(tgt: list[int]) -> list[float]:
+    return [float(t) for t in tgt]
+
+
 def add(tgt: list[int], v: float) -> list[float]:
     return [t + v for t in tgt]
 
@@ -42,21 +46,21 @@ def main():
         if args["schedule"]
         else JobnetManager()
     )
-    xrange = Util.integerize_xrange(
-        Util.merge_xrange(
-            joblogs.xrange(),
-            schedule.xrange(),
+    xrange = Util.integerize_range(
+        Util.merge_range(
+            joblogs.range(),
+            schedule.range(),
         )
     )
 
-    yticks, ylbls = joblogs.extract_yticks(), joblogs.extract_ylabels()
+    yticks, ylbls = joblogs.extract_ticks(), joblogs.extract_labels()
 
     plotter = Plotter()
     plotter.set_canvas(yticks, ylbls, xrange, args["figsize"])
 
     if schedule.is_empty():
         plotter.plot_barh(
-            yticks,
+            itof(yticks),
             joblogs.extract_bars(),
             {"b": "executed/executing", "r": "executed(error)"},
         )
@@ -65,9 +69,7 @@ def main():
         schedule.complement_with(joblogs)
         schedule.sort_by_keys(joblogs.get_order())
         joblogs.set_status_by_schedule(schedule)
-        plotter.plot_barh(
-            add(yticks, 0.2), schedule.extract_bars(), {"g": "scheduled"}
-        )
+        plotter.plot_barh(add(yticks, 0.2), schedule.extract_bars(), {"g": "scheduled"})
         plotter.plot_barh(
             add(yticks, -0.2),
             joblogs.extract_bars(),

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Tuple
 
+from bar import Bar
 from job import Job
 
 
@@ -11,7 +12,7 @@ class Jobnet:
         self.name = name
         self.jobs: dict[str, Job] = {}
 
-    def xrange(self) -> Tuple[float, float]:
+    def range(self) -> Tuple[float, float]:
         mn, mx = 24.0, 0.0
         for job in self.jobs.values():
             mn = min(mn, job.start)
@@ -47,6 +48,9 @@ class Jobnet:
 
     def size(self) -> int:
         return len(self.jobs)
+
+    def to_bars(self) -> list[Bar]:
+        return [job.to_bar() for job in self.jobs.values()]
 
     def show(self):
         for jn in self.jobs.values():
