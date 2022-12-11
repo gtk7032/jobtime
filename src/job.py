@@ -66,3 +66,6 @@ class Job:
 
     def is_within(self, job: Job) -> bool:
         return self.start >= job.start and self.end <= job.end
+
+    def show(self) -> None:
+        print(vars(self))
