@@ -49,14 +49,13 @@ ls resources
 docker exec -it jobtime python src/main.py --joblog=joblog.csv 
 
 # example 2.
-docker exec -it jobtime python src/main.py --joblog=joblog.csv 
---schedule=schedule.csv
+docker exec -it jobtime python src/main.py --joblog=joblog.csv --schedule=schedule.csv
 
 # example 3.
 docker exec -it jobtime python src/main.py --joblog=joblog.csv --schedule=schedule.csv --output=result.png
 
 ls output
-    joblog.svg, result.png
+    joblog.svg result.png
 
 ```
 ## License
