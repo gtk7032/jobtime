@@ -14,14 +14,12 @@ jobtime is a tool to visualize job execution time for [Job Arranger](https://www
 - Docker Engine
 - Docker Compose
 - Job Execution Log  
-    - required: yes
     - how to get: 
         - [JobArranger Manager GUI](https://www.jobarranger.info/document/doku.php?id=4.0:operation:management:08file)
         - [jobarg_joblogput command](https://www.jobarranger.info/jaz/operation-manual_2.0/10external-joblogput.html)
     - encoding: UTF-8
-    - newline code: LFs
-- Job Schedule
-    - required: no
+    - newline code: LF
+- Job Schedule (if needed)
     - see [sample](resources/schedule.csv)
     - encoding: UTF-8
     - newline code: LF
@@ -38,11 +36,12 @@ git clone https://github.com/gtk7032/jobtime.git
 
 cd jobtime
 
+# root not recommended 
 docker-compose build --build-arg UID=$(id -u) --build-arg GID=$(id -g)
 
 ls resources
     joblog.csv 
-    schedule.csv # if you need
+    schedule.csv
 
 # example 1.
 docker exec -it jobtime python src/main.py --joblog=joblog.csv 
@@ -57,7 +56,7 @@ docker exec -it jobtime python src/main.py --joblog=joblog.csv --figsize=4:3
 # default --> figsize=16:9
 
 # example 4.
-docker exec -it jobtime python src/main.py --joblog=joblog.csv --schedule=schedule.csv --output=result.png
+docker exec -it jobtime python src/main.py --joblog=joblog.csv --output=result.png
 # --> output/result.png
 
 ```
