@@ -42,15 +42,13 @@ class JobnetManager:
 
     @staticmethod
     def read_joblog(path: str) -> JobnetManager:
-
         manager = JobnetManager()
 
-        with open(path, "r", encoding="utf-8") as f:
-
+        enc = Util.detect_enc(path)
+        with open(path, "r", encoding=enc["encoding"]) as f:
             reader = DictReader(f)
 
             for row in reader:
-
                 date = Util.datetime_to_hour(
                     dt.strptime(row["log date"], "%Y/%m/%d %H:%M:%S.%f")
                 )
@@ -90,11 +88,10 @@ class JobnetManager:
 
     @staticmethod
     def read_schedule(path: str) -> JobnetManager:
-
         manager = JobnetManager()
 
-        with open(path, "r", encoding="utf-8") as f:
-
+        enc = Util.detect_enc(path)
+        with open(path, "r", encoding=enc["encoding"]) as f:
             reader = DictReader(f)
 
             for row in reader:
@@ -118,7 +115,6 @@ class JobnetManager:
         return {jobnetid: jobnet.to_bars() for jobnetid, jobnet in self.jobnets.items()}
 
     def complement_with(self, ref: JobnetManager) -> None:
-
         if self.is_empty() or ref.is_empty():
             return
 
@@ -147,7 +143,6 @@ class JobnetManager:
         return list(range(len(self.jobnets)))
 
     def mapping(self, schedule: JobnetManager) -> dict[str, list[int]]:
-
         pair_x = {jn.id: [-1] * jn.size() for jn in self.jobnets.values()}
         pair_dist = {jn.id: [24.0] * jn.size() for jn in self.jobnets.values()}
         secured = {
@@ -169,12 +164,10 @@ class JobnetManager:
             )
 
         for jobnet in self.jobnets.values():
-
             if schedule.jobnets[jobnet.id].is_empty():
                 continue
 
             while keep_mapping(jobnet.id):
-
                 for jx, job in enumerate(jobnet.jobs.values()):
                     if pair_x[jobnet.id][jx] != -1:
                         continue
@@ -201,7 +194,6 @@ class JobnetManager:
         return pair_x
 
     def set_status_by_schedule(self, schedules: JobnetManager) -> None:
-
         pair_x = self.mapping(schedules)
 
         for jobnet in self.jobnets.values():

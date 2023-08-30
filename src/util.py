@@ -1,5 +1,8 @@
 import math
 from datetime import datetime as dt
+from typing import Any
+
+from chardet import detect
 
 
 class Util:
@@ -21,3 +24,9 @@ class Util:
     @staticmethod
     def integerize_range(xrange: tuple[float, float]) -> tuple[int, int]:
         return math.floor(xrange[0]), math.ceil(xrange[1])
+
+    @staticmethod
+    def detect_enc(path) -> dict[str, Any]:
+        with open(path, "rb") as f:
+            b = f.read()
+            return detect(b)

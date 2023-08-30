@@ -39,7 +39,7 @@ def add(tgt: list[int], v: float) -> list[float]:
 
 
 def main():
-    args = parse_arguments()
+    args =parse_arguments()
     joblogs = JobnetManager.read_joblog(args["joblog"])
     schedule = (
         JobnetManager.read_schedule(args["schedule"])

@@ -18,7 +18,8 @@ RUN groupadd -g "$GID" "$GROUPNAME" \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir \
-    matplotlib==3.6.1  \
+    matplotlib==3.6.1 \
+    chardet==5.2.0 \
     && sed -i 's/#font.family:  sans-serif/font.family:   IPAexGothic/g' "$MPLRC"
 
 ENV TZ "$TIMEZONE"

@@ -4,7 +4,9 @@
 
 jobtime is a tool to visualize job execution time for [Job Arranger](https://www.jobarranger.info/jaz/top.html).
 
-![](output/joblog.svg)
+<div align="center">
+<img src="output/joblog.svg" width="75%">
+</div>
 
 ## Features
 - job execution times can be viewed at a glance
@@ -17,49 +19,48 @@ jobtime is a tool to visualize job execution time for [Job Arranger](https://www
     - how to get: 
         - [JobArranger Manager GUI](https://www.jobarranger.info/document/doku.php?id=4.0:operation:management:08file)
         - [jobarg_joblogput command](https://www.jobarranger.info/jaz/operation-manual_2.0/10external-joblogput.html)
-    - encoding: UTF-8
-    - newline code: LF
 - Job Schedule (if needed)
     - see [sample](resources/schedule.csv)
-    - encoding: UTF-8
-    - newline code: LF
 
-## Download
+## Setup
+To use jobtime, follow these steps:
 
-```bash
-git clone https://github.com/gtk7032/jobtime.git
-```
+1. Douwnload:
+    ~~~bash
+    git clone https://github.com/gtk7032/jobtime.git
+    ~~~
+
+1. Build the Docker image:
+   ~~~bash
+   docker-compose build --build-arg UID=$(id -u) --build-arg GID=$(id -g)
+   ~~~
+   The UID and GID arguments will be assigned to the user used within the container.
+
+1. Launch the container:
+    ~~~bash
+    docker-compose up -d
+    ~~~
 
 ## Usage
 
-```bash
-
-cd jobtime
-
-# root not recommended 
-docker-compose build --build-arg UID=$(id -u) --build-arg GID=$(id -g)
-
-ls resources
-    joblog.csv 
-    schedule.csv
-
-# example 1.
+### Example:
+~~~bash
 docker exec -it jobtime python src/main.py --joblog=joblog.csv 
 # --> output/joblog.svg
+~~~
 
-# example 2.
-docker exec -it jobtime python src/main.py --joblog=joblog.csv --schedule=schedule.csv
+### Required argument:
+| Parameter | Description                        |
+| :-------- | :--------------------------------- |
+| --joblog  | Path of the job execution log file |
 
-# example 3.
-docker exec -it jobtime python src/main.py --joblog=joblog.csv --figsize=4:3
-# figsize=x:y --> (width,height)=(100x[px],100y[px]) 
-# default --> figsize=16:9
+### Optional arguments: 
+| Parameter  | Default    | Description                                                      |
+| :--------- | :--------- | :--------------------------------------------------------------- |
+| --schedule |            | path of the job schedule file ([sample](resources/schedule.csv)) |
+| --figsize  | 16:9       | width:height                                                     |
+| --output   | joblog.svg | output file name                                                 |
 
-# example 4.
-docker exec -it jobtime python src/main.py --joblog=joblog.csv --output=result.png
-# --> output/result.png
-
-```
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
