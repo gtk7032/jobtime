@@ -45,7 +45,9 @@ class JobnetManager:
         manager = JobnetManager()
 
         enc = Util.detect_enc(path)
-        with open(path, "r", encoding=enc["encoding"]) as f:
+        if not enc:
+            raise Exception()
+        with open(path, "r", encoding=enc) as f:
             reader = DictReader(f)
 
             for row in reader:
@@ -91,7 +93,9 @@ class JobnetManager:
         manager = JobnetManager()
 
         enc = Util.detect_enc(path)
-        with open(path, "r", encoding=enc["encoding"]) as f:
+        if not enc:
+            raise Exception()
+        with open(path, "r", encoding=enc) as f:
             reader = DictReader(f)
 
             for row in reader:

@@ -16,11 +16,10 @@ jobtime is a tool to visualize job execution time for [Job Arranger](https://www
 - Docker Engine
 - Docker Compose
 - Job Execution Log  
-    - how to get: 
-        - [JobArranger Manager GUI](https://www.jobarranger.info/document/doku.php?id=4.0:operation:management:08file)
-        - [jobarg_joblogput command](https://www.jobarranger.info/jaz/operation-manual_2.0/10external-joblogput.html)
+    - [JobArranger Manager GUI](https://www.jobarranger.info/document/doku.php?id=4.0:operation:management:08file)
+    - [jobarg_joblogput command](https://www.jobarranger.info/jaz/operation-manual_2.0/10external-joblogput.html)
 - Job Schedule (if needed)
-    - see [sample](resources/schedule.csv)
+    - [sample](resources/schedule.csv)
 
 ## Setup
 To use jobtime, follow these steps:

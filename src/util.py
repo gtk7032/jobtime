@@ -1,6 +1,5 @@
 import math
 from datetime import datetime as dt
-from typing import Any
 
 from chardet import detect
 
@@ -26,7 +25,8 @@ class Util:
         return math.floor(xrange[0]), math.ceil(xrange[1])
 
     @staticmethod
-    def detect_enc(path) -> dict[str, Any]:
+    def detect_enc(path) -> str | None:
         with open(path, "rb") as f:
             b = f.read()
-            return detect(b)
+            e = detect(b)
+            return e["encoding"]
