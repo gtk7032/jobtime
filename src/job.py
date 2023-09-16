@@ -29,7 +29,6 @@ class Status(Flag):
 
 
 class Job:
-
     START_MSG = ["ジョブネットが開始しました。", "Jobnet has started."]
     SUCCESSFUL_MSG = ["ジョブネットが終了しました。", "Jobnet has ended."]
     ERROR_MSG = ["ジョブが異常終了しました。", "Job failed."]

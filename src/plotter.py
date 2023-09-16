@@ -1,8 +1,7 @@
 from typing import Tuple
 
-from matplotlib import pyplot as plt
-
 from bar import Bar
+from matplotlib import pyplot as plt
 
 
 class Plotter:
@@ -27,7 +26,6 @@ class Plotter:
         bars: list[list[Bar]],
         lbls: dict[str, str],
     ) -> None:
-
         clr_set = {bar.color for col in bars for bar in col if bar.color}
         dmy_clr = [0.0 for _ in range(len(yticks))]
         for c in clr_set:
