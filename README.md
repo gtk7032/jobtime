@@ -36,7 +36,7 @@ To use jobtime, follow these steps:
 1. Build the Docker image:
 
    ~~~bash
-   docker-compose build --build-arg UID=$(id -u) --build-arg GID=$(id -g)
+   docker compose build --build-arg UID=$(id -u) --build-arg GID=$(id -g)
    ~~~
 
    The UID and GID arguments will be assigned to the user used within the container.
@@ -44,7 +44,7 @@ To use jobtime, follow these steps:
 1. Launch the container:
 
     ~~~bash
-    docker-compose up -d
+    docker compose up -d
     ~~~
 
 ## Usage
