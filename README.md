@@ -16,7 +16,6 @@ jobtime is a tool to visualize job execution time for [Job Arranger](https://www
 ## Requirements
 
 - Docker Engine
-- Docker Compose
 - Job Execution Log  
   - [JobArranger Manager GUI](https://www.jobarranger.info/document/doku.php?id=4.0:operation:management:08file)
   - [jobarg_joblogput command](https://www.jobarranger.info/jaz/operation-manual_2.0/10external-joblogput.html)
